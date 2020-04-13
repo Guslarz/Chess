@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.1022
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Chess", "Chess\Chess.vcxproj", "{D7B61007-DA24-4CF3-A1B3-E898F3154CEE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D7B61007-DA24-4CF3-A1B3-E898F3154CEE}.Debug|x64.ActiveCfg = Debug|x64
+		{D7B61007-DA24-4CF3-A1B3-E898F3154CEE}.Debug|x64.Build.0 = Debug|x64
+		{D7B61007-DA24-4CF3-A1B3-E898F3154CEE}.Debug|x86.ActiveCfg = Debug|Win32
+		{D7B61007-DA24-4CF3-A1B3-E898F3154CEE}.Debug|x86.Build.0 = Debug|Win32
+		{D7B61007-DA24-4CF3-A1B3-E898F3154CEE}.Release|x64.ActiveCfg = Release|x64
+		{D7B61007-DA24-4CF3-A1B3-E898F3154CEE}.Release|x64.Build.0 = Release|x64
+		{D7B61007-DA24-4CF3-A1B3-E898F3154CEE}.Release|x86.ActiveCfg = Release|Win32
+		{D7B61007-DA24-4CF3-A1B3-E898F3154CEE}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {74808A77-D77B-421F-BD8A-5167C5F35686}
+	EndGlobalSection
+EndGlobal
