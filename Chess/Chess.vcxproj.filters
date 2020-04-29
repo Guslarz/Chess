@@ -5,50 +5,101 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Game">
+    <Filter Include="GameData">
       <UniqueIdentifier>{a55c615b-d1ec-40ab-bbb4-7cae96f9943d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game\Parser">
+    <Filter Include="GameData\Parser">
       <UniqueIdentifier>{b1cc7404-3699-4948-a2db-9e3442366f1c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game\Move">
+    <Filter Include="Board">
+      <UniqueIdentifier>{b41f22ae-d826-4f3e-9b4c-d7a8eb6d9d67}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Board\Piece">
+      <UniqueIdentifier>{44434d98-b179-4bc0-9506-0c95d197d7da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Move">
       <UniqueIdentifier>{d3301b5c-fb32-4930-b0a3-cd37a428575d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game\Move\Position">
+    <Filter Include="Move\Position">
       <UniqueIdentifier>{7891837d-4c9b-403f-ad6f-7980f91c5b68}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Board\Animation">
+      <UniqueIdentifier>{df29dcc7-cee4-44d6-be48-7adeab4b96a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Model">
+      <UniqueIdentifier>{ece1e945-2468-4c1e-b878-74ddce4897d7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ShaderProgram">
+      <UniqueIdentifier>{8c183d92-65a8-4c90-ab28-71ecfb4fda29}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Game.cpp">
-      <Filter>Game</Filter>
-    </ClCompile>
     <ClCompile Include="Parser.cpp">
-      <Filter>Game\Parser</Filter>
+      <Filter>GameData\Parser</Filter>
     </ClCompile>
     <ClCompile Include="Move.cpp">
-      <Filter>Game\Move</Filter>
+      <Filter>Move</Filter>
     </ClCompile>
     <ClCompile Include="Position.cpp">
-      <Filter>Game\Move\Position</Filter>
+      <Filter>Move\Position</Filter>
+    </ClCompile>
+    <ClCompile Include="GameData.cpp">
+      <Filter>GameData</Filter>
+    </ClCompile>
+    <ClCompile Include="Board.cpp">
+      <Filter>Board</Filter>
+    </ClCompile>
+    <ClCompile Include="Piece.cpp">
+      <Filter>Board\Piece</Filter>
+    </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation.cpp">
+      <Filter>Board\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="ShaderProgram.cpp">
+      <Filter>ShaderProgram</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Game.h">
-      <Filter>Game</Filter>
-    </ClInclude>
     <ClInclude Include="Parser.h">
-      <Filter>Game\Parser</Filter>
+      <Filter>GameData\Parser</Filter>
     </ClInclude>
     <ClInclude Include="Move.h">
-      <Filter>Game\Move</Filter>
+      <Filter>Move</Filter>
     </ClInclude>
     <ClInclude Include="Position.h">
-      <Filter>Game\Move\Position</Filter>
+      <Filter>Move\Position</Filter>
+    </ClInclude>
+    <ClInclude Include="GameData.h">
+      <Filter>GameData</Filter>
+    </ClInclude>
+    <ClInclude Include="Board.h">
+      <Filter>Board</Filter>
+    </ClInclude>
+    <ClInclude Include="Piece.h">
+      <Filter>Board\Piece</Filter>
+    </ClInclude>
+    <ClInclude Include="Model.h">
+      <Filter>Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation.h">
+      <Filter>Board\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderProgram.h">
+      <Filter>ShaderProgram</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="test.pgn">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="fragment.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="vertex.glsl">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

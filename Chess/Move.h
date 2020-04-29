@@ -17,6 +17,7 @@ public:
 	virtual ~Move() {}
 
 	virtual Side side() const { return _side; }
+	virtual operator std::string() const = 0;
 };
 
 
@@ -31,6 +32,7 @@ public:
 
 	virtual const Position& from() const { return _from; }
 	virtual const Position& to() const { return _to; }
+	virtual operator std::string() const override;
 };
 
 
@@ -52,6 +54,7 @@ public:
 	virtual const Position& kingTo() const { return _kingTo; }
 	virtual const Position& rookFrom() const { return _rookFrom; }
 	virtual const Position& rookTo() const { return _rookTo; }
+	virtual operator std::string() const override;
 };
 
 
@@ -62,6 +65,7 @@ public:
 	CaptureMove(Side, const Position&, const Position&);
 
 	virtual const Position& target() const { return _to; }
+	virtual operator std::string() const override;
 };
 
 
@@ -74,6 +78,7 @@ public:
 	EnPassantCaptureMove(Side, const Position&, const Position&);
 
 	virtual const Position& target() const { return _target; }
+	virtual operator std::string() const override;
 };
 
 
@@ -86,6 +91,7 @@ public:
 	PromotionMove(Side, const Position&, const Position&, PieceType);
 
 	virtual PieceType promotion() const { return _promotion; }
+	virtual operator std::string() const override;
 };
 
 
@@ -94,4 +100,5 @@ class CapturePromotionMove :
 {
 public:
 	CapturePromotionMove(Side, const Position&, const Position&, PieceType);
+	virtual operator std::string() const override;
 };

@@ -21,6 +21,12 @@ Position::Position(const std::string &position) :
 {}
 
 
+Position::operator std::string() const
+{
+	return std::string({ static_cast<char>(_x + 'a'), static_cast<char>(_y + '1') });
+}
+
+
 Position Position::operator+(const Position &other) const
 {
 	return Position(_x + other._x, _y + other._y);

@@ -1,7 +1,9 @@
-#include "Game.h"
+#include "GameData.h"
+
+//#include <iostream>
 
 
-Game::Game(const std::string &filename) 
+GameData::GameData(const std::string &filename) 
 {
 	std::ifstream in(filename);
 	parse(in);
@@ -9,13 +11,31 @@ Game::Game(const std::string &filename)
 }
 
 
-Game::Game(std::ifstream &in)
+GameData::GameData(std::ifstream &in)
 {
 	parse(in);
 }
 
 
-void Game::parse(std::ifstream &in)
+const Move* GameData::nextMove()
+{
+	auto last = _moves->cend();
+	if (_currentMove == last)
+		return nullptr;
+	return *_currentMove++;
+}
+
+
+const Move* GameData::prevMove()
+{
+	auto first = _moves->cbegin();
+	if (_currentMove == first)
+		return nullptr;
+	return *--_currentMove;
+}
+
+
+void GameData::parse(std::ifstream &in)
 {
 	if (!in.is_open())
 		throw FileNotFound();
@@ -52,7 +72,7 @@ void Game::parse(std::ifstream &in)
 
 	Parser parser;
 	std::string score = _tags.at("Result");
-	std::cout << std::string(parser) << "\n" << std::endl;
+	//std::cout << std::string(parser) << "\n" << std::endl;
 	std::string num, white, black;
 	in.get();
 	while (in >> num >> white >> black) {
@@ -64,7 +84,9 @@ void Game::parse(std::ifstream &in)
 		catch (Parser::InvalidMove&) {
 			throw InvalidFormat();
 		}
-		std::cout << white << " " << black << "\n" << std::string(parser) << "\n" << std::endl;;
+		//std::cout << white << " " << black << "\n" << std::string(parser) << "\n" << std::endl;;
 	}
+
 	_moves.swap(parser.moves());
+	_currentMove = _moves->cbegin();
 }

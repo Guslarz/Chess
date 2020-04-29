@@ -129,20 +129,32 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Game.cpp" />
+    <ClCompile Include="Animation.cpp" />
+    <ClCompile Include="Board.cpp" />
+    <ClCompile Include="GameData.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Model.cpp" />
     <ClCompile Include="Move.cpp" />
     <ClCompile Include="Parser.cpp" />
+    <ClCompile Include="Piece.cpp" />
     <ClCompile Include="Position.cpp" />
+    <ClCompile Include="ShaderProgram.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Game.h" />
+    <ClInclude Include="Animation.h" />
+    <ClInclude Include="Board.h" />
+    <ClInclude Include="GameData.h" />
+    <ClInclude Include="Model.h" />
     <ClInclude Include="Move.h" />
     <ClInclude Include="Parser.h" />
+    <ClInclude Include="Piece.h" />
     <ClInclude Include="Position.h" />
+    <ClInclude Include="ShaderProgram.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="fragment.glsl" />
     <None Include="test.pgn" />
+    <None Include="vertex.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

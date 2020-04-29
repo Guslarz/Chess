@@ -14,6 +14,7 @@ public:
 	Position(const std::string&);
 
 	operator size_t() const { return _x * 8 + _y; }
+	operator std::string() const;
 
 	int x() const { return _x; }
 	int y() const { return _y; }

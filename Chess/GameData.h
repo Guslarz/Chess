@@ -3,12 +3,12 @@
 #include <unordered_map>
 #include <fstream>
 
-#include <iostream>
+//#include <iostream>
 
 #include "Parser.h"
 
 
-class Game
+class GameData
 {
 public:
 	class Exception : std::exception
@@ -29,10 +29,14 @@ public:
 private:
 	std::unordered_map<std::string, std::string> _tags;
 	std::unique_ptr<std::vector<Move*>> _moves;
+	std::vector<Move*>::const_iterator _currentMove;
 
 public:
-	Game(const std::string&);
-	Game(std::ifstream&);
+	GameData(const std::string&);
+	GameData(std::ifstream&);
+
+	const Move* nextMove();
+	const Move* prevMove();
 
 private:
 	void parse(std::ifstream&);
