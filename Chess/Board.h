@@ -5,9 +5,9 @@
 #include <vector>
 #include <array>
 
-#include "Piece.h"
 #include "Move.h"
 #include "ShaderProgram.h"
+#include "Animation.h"
 
 
 class Board
@@ -15,8 +15,12 @@ class Board
 	std::vector<Piece*> _pieces;
 	std::array<Piece*, 64> _board;
 	std::vector<Piece*> _captured;
+	std::vector<Animation*> _animations;
+	float _time;
+
 	const ShaderProgram *_shaderProgram;
 	const glm::mat4 &_P, &_V, &_M;
+
 	const Model *_model;
 
 public:
@@ -25,6 +29,10 @@ public:
 
 	void render() const;
 	void applyMove(const Move*);
+	void addTime(float time) { _time += time; }
+	void finishAnimations();
+
+	bool finished() const;
 
 private:
 	void addPiece(Piece*);

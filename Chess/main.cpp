@@ -65,6 +65,7 @@ int main()
 
 	data = new GameData("test.pgn");
 	board = new Board(shaderProgram, P, V, M);
+	glfwSetTime(0.0);
 	while (!glfwWindowShouldClose(window)) {
 		drawScene(window);
 	}
@@ -192,23 +193,21 @@ void freeOpenGLProgram(GLFWwindow *window)
 
 void drawScene(GLFWwindow *window)
 {
-	static float totalTime = 0.0f;
-
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	float time = static_cast<float>(glfwGetTime());
+	glfwSetTime(0.0);
 	updateVMatrix(time);
-	totalTime += time;
-	if (totalTime >= 0.1f) {
-		totalTime -= 0.1f;
+
+	board->addTime(time);
+	if (board->finished()) {
 		const Move *move = data->nextMove();
 		if (move) {
 			printf("%s\n", std::string(*move).c_str());
+			board->finishAnimations();
 			board->applyMove(move);
 		}
 	}
-
-	glfwSetTime(0);
 
 	board->render();
 
