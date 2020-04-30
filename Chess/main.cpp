@@ -22,30 +22,34 @@ GLFWwindow* initGLFWwindow();
 void initOpenGLProgram(GLFWwindow*);
 void freeOpenGLProgram(GLFWwindow*);
 void drawScene(GLFWwindow*);
+void updateVMatrix(float);
 
 
 constexpr int
 INITIAL_WIDTH = 500,
 INITIAL_HEIGHT = 500;
+
 constexpr float
-FOV = 50.0f * static_cast<float>(M_PI) / 180.0f,
+PI = static_cast<float>(M_PI),
+PI2 = 2.0f * PI,
+FOV = 50.0f * PI / 180.0f,
 Z_NEAR = 0.01f,
 Z_FAR = 50.0f,
 SPEED = 5.0f,
-SPEED_ROT = static_cast<float>(M_PI) / 2;
+SPEED_ROT = PI / 2.0f;
+
+constexpr glm::mat4 unitMatrix(1.0f);
 
 
 ShaderProgram *shaderProgram;
-glm::mat4 P, V, M;	//M - pole a1
+glm::mat4 P, V, M;
 GameData *data;
 Board *board;
 
 float
-speedX = 0,
-speedY = 0,
-speedZ = 0,
-speedRotX = 0,
-speedRotY = 0;
+speed = 0.0f,
+speedVertical = 0.0f,
+speedHorizontal = 0.0f;
 
 
 GLuint VertexArrayID;
@@ -86,34 +90,22 @@ void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods
 	case GLFW_PRESS:
 		switch (key) {
 		case GLFW_KEY_W:
-			speedZ = -SPEED;
+			speedVertical = SPEED_ROT;
 			break;
 		case GLFW_KEY_S:
-			speedZ = SPEED;
+			speedVertical = -SPEED_ROT;
 			break;
 		case GLFW_KEY_A:
-			speedX = -SPEED;
+			speedHorizontal = SPEED_ROT;
 			break;
 		case GLFW_KEY_D:
-			speedX = SPEED;
+			speedHorizontal = -SPEED_ROT;
 			break;
 		case GLFW_KEY_Z:
-			speedY = SPEED;
+			speed = SPEED;
 			break;
 		case GLFW_KEY_X:
-			speedY = -SPEED;
-			break;
-		case GLFW_KEY_Q:
-			speedRotY = -SPEED_ROT;
-			break;
-		case GLFW_KEY_E:
-			speedRotY = SPEED_ROT;
-			break;
-		case GLFW_KEY_C:
-			speedRotX = SPEED_ROT;
-			break;
-		case GLFW_KEY_V:
-			speedRotX = -SPEED_ROT;
+			speed = -SPEED;
 			break;
 		}
 		break;
@@ -121,23 +113,15 @@ void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods
 		switch (key) {
 		case GLFW_KEY_W:
 		case GLFW_KEY_S:
-			speedZ = 0;
+			speedVertical = 0;
 			break;
 		case GLFW_KEY_A:
 		case GLFW_KEY_D:
-			speedX = 0;
+			speedHorizontal = 0;
 			break;
 		case GLFW_KEY_Z:
 		case GLFW_KEY_X:
-			speedY = 0;
-			break;
-		case GLFW_KEY_Q:
-		case GLFW_KEY_E:
-			speedRotY = 0;
-			break;
-		case GLFW_KEY_C:
-		case GLFW_KEY_V:
-			speedRotX = 0;
+			speed = 0;
 			break;
 		}
 		break;
@@ -187,11 +171,8 @@ void initOpenGLProgram(GLFWwindow *window)
 	shaderProgram = new ShaderProgram("vertex.glsl", "fragment.glsl");
 	Model::loadModels();
 	P = glm::perspective(FOV, static_cast<float>(INITIAL_WIDTH) / INITIAL_HEIGHT, Z_NEAR, Z_FAR);
-	V = glm::lookAt(
-		glm::vec3(0.0f, 15.0f, 0.0f),
-		glm::vec3(.0f, .0f, .0f),
-		glm::vec3(0.0f, 0.0f, 1.0f));
-	M = glm::mat4(1.0f);
+	updateVMatrix(0.0f);
+	M = unitMatrix;
 
 	glClearColor(.5f, .5f, .5f, 1.0f);
 	glEnable(GL_DEPTH_TEST);
@@ -216,7 +197,7 @@ void drawScene(GLFWwindow *window)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	float time = static_cast<float>(glfwGetTime());
-
+	updateVMatrix(time);
 	totalTime += time;
 	if (totalTime >= 0.1f) {
 		totalTime -= 0.1f;
@@ -227,13 +208,33 @@ void drawScene(GLFWwindow *window)
 		}
 	}
 
-	M = glm::translate(M, glm::vec3(speedX, speedY, speedZ) * time);
-	M = glm::rotate(M, speedRotX * time, glm::vec3(1.0f, .0f, .0f));
-	M = glm::rotate(M, speedRotY * time, glm::vec3(.0, 1.0f, .0f));
 	glfwSetTime(0);
 
 	board->render();
 
 	glfwSwapBuffers(window);
 	glfwPollEvents();
+}
+
+
+void updateVMatrix(float time)
+{
+	static float distance = 15.0f,
+		angleVertical = PI / 4.0f,
+		angleHorizontal = 0.0f;
+
+	distance += speed * time;
+	if (distance <= 1.0f) distance = 1.0f;
+
+	angleHorizontal += speedHorizontal * time;
+	if (angleHorizontal >= PI2) angleHorizontal -= PI2;
+	if (angleHorizontal <= -PI2) angleHorizontal += PI2;
+
+	angleVertical += speedVertical * time;
+	if (angleVertical >= PI2) angleVertical -= PI2;
+	if (angleVertical <= -PI2) angleVertical += PI2;
+
+	V = glm::translate(unitMatrix, glm::vec3(0.0f, 0.0f, -distance));
+	V = glm::rotate(V, angleVertical, glm::vec3(1.0f, 0.0f, 0.0f));
+	V = glm::rotate(V, angleHorizontal, glm::vec3(0.0f, 1.0f, 0.0f));
 }

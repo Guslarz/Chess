@@ -30,7 +30,7 @@ void Board::render() const
 	glUniform4f(_shaderProgram->getUniform("color"), .0f, .0f, .0f, 1.0f);
 	_model->render();
 
-	glm::mat4 pieceM = glm::translate(_M, glm::vec3(-3.5f, 1.0f, -3.5f));
+	glm::mat4 pieceM = glm::translate(glm::scale(_M, glm::vec3(-1.0f, 1.0f, 1.0f)), glm::vec3(-3.5f, 1.0f, -3.5f));
 	glUniform4f(_shaderProgram->getUniform("color"), 1.0f, .0f, .0f, 1.0f);
 	for (auto piece : _pieces)
 		piece->render(_shaderProgram, _P, _V, pieceM);
