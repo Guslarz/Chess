@@ -28,6 +28,7 @@ public:
 	~Board();
 
 	void render() const;
+	void applyAnimations();
 	void applyMove(const Move*);
 	void addTime(float time) { _time += time; }
 	void finishAnimations();

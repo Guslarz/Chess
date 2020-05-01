@@ -14,8 +14,13 @@ Board::Board(const ShaderProgram *shaderProgram, const glm::mat4 &P, const glm::
 	_time(0.0f), _shaderProgram(shaderProgram), _P(P), _V(V), _M(M), _model(Model::rect)
 {
 	for (int i = 0; i < 16; ++i) {
-		addPiece(new Piece(Model::cube, Position(i % 8, i / 8)));
-		addPiece(new Piece(Model::cube, Position(i % 8, 7 - i / 8)));
+		int x = i % 8, y1 = i / 8, y2 = 7 - y1;
+		Piece *piece = new Piece(Model::cube, glm::vec3(x, 0.0f, y1));
+		_board[Position(x, y1)] = piece;
+		_pieces.push_back(piece);
+		piece = new Piece(Model::cube, glm::vec3(x, 0.0f, y2));
+		_board[Position(x, y2)] = piece;
+		_pieces.push_back(piece);
 	}
 }
 
@@ -40,8 +45,13 @@ void Board::render() const
 	glUniform4f(_shaderProgram->getUniform("color"), 1.0f, .0f, .0f, 1.0f);
 	for (auto piece : _pieces)
 		piece->render(_shaderProgram, _P, _V, pieceM);
+}
+
+
+void Board::applyAnimations()
+{
 	for (auto animation : _animations)
-		animation->render(_shaderProgram, _P, _V, pieceM, _time);
+		animation->apply(_time);
 }
 
 
@@ -64,14 +74,8 @@ void Board::applyMove(const Move *move)
 
 void Board::finishAnimations()
 {
-	for (auto animation : _animations) {
-		Piece *piece = animation->target();
-		auto &position = piece->position();
-		if (position.y() >= 0 && position.y() < 8 && position.x() >= 0 && position.x() < 8)
-			_pieces.push_back(piece);
-		else _captured.push_back(piece);
+	for (auto animation : _animations)
 		delete animation;
-	}
 	_animations.erase(_animations.cbegin(), _animations.cend());
 	_time = 0.0f;
 }
@@ -88,22 +92,19 @@ bool Board::finished() const
 }
 
 
-void Board::addPiece(Piece *piece)
-{
-	_pieces.push_back(piece);
-	_board[piece->position()] = piece;
-}
-
-
 void Board::capturePieceAt(const Position &position)
 {
 	Piece *piece = _board[position];
 	_board[position] = nullptr;
-	auto it = _pieces.cbegin();
-	while (*it != piece) ++it;
-	_pieces.erase(it);
-	piece->setPosition(Position(-1, -1));
-	_animations.push_back(new StraightAnimation(0.0f, ANIMATION_DURATION, piece, position.x(), position.x(), 0.0f, CAPTURE_Y, position.y(), position.y()));
+	glm::vec3 from(static_cast<float>(position.x()), 0.0f, static_cast<float>(position.y())),
+		to = from;
+	to.y = CAPTURE_Y;
+	_animations.push_back(new StraightAnimation(0.0f, ANIMATION_DURATION, piece, from, to, [=]() {
+		auto it = _pieces.cbegin();
+		while (*it != piece) ++it;
+		_pieces.erase(it);
+		_captured.push_back(piece);
+	}));
 }
 
 
@@ -112,9 +113,9 @@ void Board::movePiece(const Position &from, const Position &to)
 	Piece *piece = _board[from];
 	_board[from] = nullptr;
 	_board[to] = piece;
-	piece->setPosition(to);
-	auto it = _pieces.cbegin();
-	while (*it != piece) ++it;
-	_pieces.erase(it);
-	_animations.push_back(new CurveAnimation(0.0f, ANIMATION_DURATION, piece, from.x(), to.x(), 0.0f, CURVE_MAX_Y, from.y(), to.y()));
+	glm::vec3 fromVec(static_cast<float>(from.x()), 0.0f, static_cast<float>(from.y())),
+		toVec(to.x(), 0.0f, to.y());
+	_animations.push_back(new CurveAnimation(0.0f, ANIMATION_DURATION, piece, fromVec, toVec, CURVE_MAX_Y, [=]() {
+		piece->setPosition(toVec);
+	}));
 }

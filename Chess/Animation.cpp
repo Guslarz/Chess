@@ -3,40 +3,34 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 
-Animation::Animation(float start, float stop, Piece *target) :
-	_start(start), _stop(stop), _target(target)
+Animation::Animation(float start, float stop, Piece *target, std::function<void()> callback) :
+	_start(start), _stop(stop), _target(target), _callback(callback)
 {}
 
 
-void Animation::render(const ShaderProgram *shaderProgram, const glm::mat4 &P, const glm::mat4 &V, const glm::mat4 &M, float time) const
+PositionAnimation::PositionAnimation(float start, float stop, Piece *target, const glm::vec3 &from, const glm::vec3 &to, std::function<void()> callback) :
+	Animation(start, stop, target, callback), _from(from), _delta(to - from)
+{}
+
+
+void PositionAnimation::apply(float time, bool force)
 {
-	glm::vec3 position;
-	if (time <= _start)
-		position = getPosition(0.0f);
-	else if (time >= _stop)
-		position = getPosition(1.0f);
-	else position = getPosition((time - _start) / (_stop - _start));
-	_target->renderForceM(shaderProgram, P,  V,  glm::translate(M, position));
+	if (time <= _start) return;
+	else if (time >= _stop) {
+		if (force)
+			_target->setPosition(getPosition(1.0f));
+	} else _target->setPosition(getPosition((time - _start) / (_stop - _start)));
 }
-
-
-StraightAnimation::StraightAnimation(float start, float stop, Piece *target, 
-	float xFrom, float xTo, float yFrom, float yTo, float zFrom, float zTo) :
-	Animation(start, stop, target), _x0(xFrom), _dx(xTo - xFrom), _y0(yFrom),
-	_dy(yTo - yFrom), _z0(zFrom), _dz(zTo - zFrom)
-{}
 
 
 glm::vec3 StraightAnimation::getPosition(float time) const
 {
-	return glm::vec3(_x0 + _dx * time, _y0 + _dy * time, _z0 + _dz * time);
+	return _delta * time + _from;
 }
 
 
-CurveAnimation::CurveAnimation(float start, float stop, Piece *target,
-	float xFrom, float xTo, float yFrom, float yTo, float zFrom, float zTo) :
-	Animation(start, stop, target), _x0(xFrom), _dx(xTo - xFrom), _y0(yFrom),
-	_dy(yTo - yFrom), _z0(zFrom), _dz(zTo - zFrom)
+CurveAnimation::CurveAnimation(float start, float stop, Piece *target, const glm::vec3 &from, const glm::vec3 &to, float maxDeltaY, std::function<void()> callback) :
+	PositionAnimation(start, stop, target, from, to, callback), _maxDeltaY(maxDeltaY)
 {}
 
 
@@ -44,5 +38,7 @@ glm::vec3 CurveAnimation::getPosition(float time) const
 {
 	float tmp = std::abs(0.5f - time),
 		coeff = 1.0f - (tmp < 0.25 ? tmp * 4.0f : 1.0f);
-	return glm::vec3(_x0 + _dx * time, _y0 + _dy * coeff, _z0 + _dz * time);
+	glm::vec3 position = _delta * time + _from;
+	position.y += _maxDeltaY * coeff;
+	return position;
 }

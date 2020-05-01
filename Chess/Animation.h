@@ -1,5 +1,7 @@
 #pragma once
 
+#include <functional>
+
 #include "Piece.h"
 
 
@@ -8,29 +10,39 @@ class Animation
 protected:
 	float _start, _stop;
 	Piece *_target;
+	std::function<void()> _callback;
 
 public:
-	Animation(float, float, Piece*);
-	virtual ~Animation() {}
+	Animation(float, float, Piece*, std::function<void()> = nullptr);
+	virtual ~Animation() { if (_callback) _callback(); }
 
-	virtual void render(const ShaderProgram*, const glm::mat4&, const glm::mat4&, const glm::mat4&, float) const;
+	virtual void apply(float, bool = false) = 0;
 	virtual bool finished(float time) const { return _stop >= time; }
 	virtual Piece* target() const { return _target; }
+};
 
-private:
+
+class PositionAnimation :
+	public Animation
+{
+protected:
+	glm::vec3 _from, _delta;
+
+public:
+	PositionAnimation(float, float, Piece*, const glm::vec3&, const glm::vec3&, std::function<void()> = nullptr);
+
+	virtual void apply(float, bool = false) override;
+
+protected:
 	virtual glm::vec3 getPosition(float) const = 0;
 };
 
 
 class StraightAnimation :
-	public Animation
+	public PositionAnimation
 {
-	float _x0, _dx,
-		_y0, _dy,
-		_z0, _dz;
-
 public:
-	StraightAnimation(float, float, Piece*, float, float, float, float, float, float);
+	using PositionAnimation::PositionAnimation;
 
 private:
 	virtual glm::vec3 getPosition(float) const override;
@@ -38,23 +50,14 @@ private:
 
 
 class CurveAnimation :
-	public Animation
+	public PositionAnimation
 {
-	float _x0, _dx,
-		_y0, _dy,
-		_z0, _dz;
+	float _maxDeltaY;
 
 public:
-	CurveAnimation(float, float, Piece*, float, float, float, float, float, float);
+	CurveAnimation(float, float, Piece*, const glm::vec3&, const glm::vec3&, float, std::function<void()> = nullptr);
 
 private:
 	virtual glm::vec3 getPosition(float) const override;
 };
-
-
-//class FadeAnimation :
-//	public Animation
-//{
-//
-//};
 

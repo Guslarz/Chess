@@ -208,7 +208,7 @@ void drawScene(GLFWwindow *window)
 			board->applyMove(move);
 		}
 	}
-
+	board->applyAnimations();
 	board->render();
 
 	glfwSwapBuffers(window);
