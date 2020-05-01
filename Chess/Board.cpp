@@ -64,10 +64,10 @@ void Board::applyMove(const Move *move)
 		movePiece(normalMove->from(), normalMove->to());
 	}
 	if (auto *promotionMove = dynamic_cast<const PromotionMove*>(move)) {
+
 	}
 	if (auto *castlingMove = dynamic_cast<const CastlingMove*>(move)) {
-		movePiece(castlingMove->kingFrom(), castlingMove->kingTo());
-		movePiece(castlingMove->rookFrom(), castlingMove->rookTo());
+		makeCastlingMove(castlingMove->kingFrom(), castlingMove->kingTo(), castlingMove->rookFrom(), castlingMove->rookTo());
 	}
 }
 
@@ -96,7 +96,7 @@ void Board::capturePieceAt(const Position &position)
 {
 	Piece *piece = _board[position];
 	_board[position] = nullptr;
-	glm::vec3 from(static_cast<float>(position.x()), 0.0f, static_cast<float>(position.y())),
+	glm::vec3 from = position,
 		to = from;
 	to.y = CAPTURE_Y;
 	_animations.push_back(new StraightAnimation(0.0f, ANIMATION_DURATION, piece, from, to, [=]() {
@@ -113,9 +113,26 @@ void Board::movePiece(const Position &from, const Position &to)
 	Piece *piece = _board[from];
 	_board[from] = nullptr;
 	_board[to] = piece;
-	glm::vec3 fromVec(static_cast<float>(from.x()), 0.0f, static_cast<float>(from.y())),
-		toVec(to.x(), 0.0f, to.y());
-	_animations.push_back(new CurveAnimation(0.0f, ANIMATION_DURATION, piece, fromVec, toVec, CURVE_MAX_Y, [=]() {
-		piece->setPosition(toVec);
+	glm::vec3 vecFrom = from,
+		vecTo = to;
+	_animations.push_back(new CurveAnimation(0.0f, ANIMATION_DURATION, piece, vecFrom, vecTo, CURVE_MAX_Y, [=]() {
+		piece->setPosition(vecTo);
+	}));
+}
+
+
+void Board::makeCastlingMove(const Position &kingFrom, const Position &kingTo, const Position &rookFrom, const Position &rookTo)
+{
+	Piece *king = _board[kingFrom],
+		*rook = _board[rookFrom];
+	_board[kingFrom] = _board[rookFrom] = nullptr;
+	_board[kingTo] = king;
+	_board[rookTo] = rook;
+
+	_animations.push_back(new CurveAnimation(0.0f, ANIMATION_DURATION, king, kingFrom, kingTo, CURVE_MAX_Y, [=]() {
+		king->setPosition(kingTo);
+	}));
+	_animations.push_back(new StraightAnimation(0.0f, ANIMATION_DURATION, rook,  rookFrom, rookTo, [=]() {
+		rook->setPosition(rookTo);
 	}));
 }

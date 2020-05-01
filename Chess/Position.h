@@ -2,6 +2,8 @@
 
 #include <string>
 
+#include <glm/glm.hpp>
+
 
 class Position
 {
@@ -15,6 +17,7 @@ public:
 
 	operator size_t() const { return _x * 8 + _y; }
 	operator std::string() const;
+	operator glm::vec3() const { return glm::vec3(static_cast<float>(_x), 0.0f, static_cast<float>(_y)); }
 
 	int x() const { return _x; }
 	int y() const { return _y; }

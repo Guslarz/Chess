@@ -39,5 +39,6 @@ private:
 	void addPiece(Piece*);
 	void capturePieceAt(const Position&);
 	void movePiece(const Position&, const Position&);
+	void makeCastlingMove(const Position&, const Position&, const Position&, const Position&);
 };
 

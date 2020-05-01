@@ -20,6 +20,6 @@ public:
 
 	const glm::vec3& position() const { return _position; }
 	void setPosition(const glm::vec3 &position) { _position = position; }
-	void setPosition(const Position &position) { _position = glm::vec3(static_cast<float>(position.x()), 0.0f, static_cast<float>(position.y())); }
+	void setPosition(const Position &position) { _position = position; }
 };
 
