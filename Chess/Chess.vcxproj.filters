@@ -32,6 +32,12 @@
     <Filter Include="ShaderProgram">
       <UniqueIdentifier>{8c183d92-65a8-4c90-ab28-71ecfb4fda29}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Texture">
+      <UniqueIdentifier>{4c397fe6-50a1-449b-be70-3206f705bbf3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Texture\lodepng">
+      <UniqueIdentifier>{9e1cf833-3b9f-4364-ae58-5ccfc385f09b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -62,6 +68,12 @@
     <ClCompile Include="ShaderProgram.cpp">
       <Filter>ShaderProgram</Filter>
     </ClCompile>
+    <ClCompile Include="lodepng.cpp">
+      <Filter>Texture\lodepng</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>Texture</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Parser.h">
@@ -90,6 +102,12 @@
     </ClInclude>
     <ClInclude Include="ShaderProgram.h">
       <Filter>ShaderProgram</Filter>
+    </ClInclude>
+    <ClInclude Include="lodepng.h">
+      <Filter>Texture\lodepng</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Texture</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

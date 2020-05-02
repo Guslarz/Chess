@@ -13,6 +13,7 @@
 #include "GameData.h"
 #include "Board.h"
 #include "Model.h"
+#include "Texture.h"
 
 
 void errorCallback(int, const char*);
@@ -133,7 +134,7 @@ void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods
 void windowSizeCallback(GLFWwindow *window, int width, int height)
 {
 	if (height == 0) return;
-	P = glm::perspective(FOV, static_cast<float>(INITIAL_WIDTH) / INITIAL_HEIGHT, Z_NEAR, Z_FAR);
+	P = glm::perspective(FOV, static_cast<float>(width) / height, Z_NEAR, Z_FAR);
 	glViewport(0, 0, width, height);
 }
 
@@ -147,7 +148,7 @@ GLFWwindow *initGLFWwindow()
 
 	glfwSetErrorCallback(errorCallback);
 
-	auto *window = glfwCreateWindow(INITIAL_WIDTH, INITIAL_HEIGHT, "OpenGL", nullptr, nullptr);
+	auto *window = glfwCreateWindow(INITIAL_WIDTH, INITIAL_HEIGHT, "Chess", nullptr, nullptr);
 
 	if (window == nullptr) {
 		fprintf(stderr, "Nie mo¿na utworzyæ okna.\n");
@@ -171,6 +172,7 @@ void initOpenGLProgram(GLFWwindow *window)
 {
 	shaderProgram = new ShaderProgram("vertex.glsl", "fragment.glsl");
 	Model::loadModels();
+	Texture::loadTextures();
 	P = glm::perspective(FOV, static_cast<float>(INITIAL_WIDTH) / INITIAL_HEIGHT, Z_NEAR, Z_FAR);
 	updateVMatrix(0.0f);
 	M = unitMatrix;
@@ -188,6 +190,8 @@ void initOpenGLProgram(GLFWwindow *window)
 void freeOpenGLProgram(GLFWwindow *window)
 {
 	delete shaderProgram;
+	Model::deleteModels();
+	Texture::deleteTextures();
 }
 
 

@@ -10,11 +10,11 @@
 class Piece
 {
 	const Model *_model;
-	//texture;
+	GLuint _texture;
 	glm::vec3 _position;
 
 public:
-	Piece(const Model*, const glm::vec3&);
+	Piece(const Model*, GLuint, const glm::vec3&);
 
 	void render(const ShaderProgram*, const glm::mat4&, const glm::mat4&, const glm::mat4&) const;
 

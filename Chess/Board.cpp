@@ -3,6 +3,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include "Texture.h"
+
 
 constexpr float
 ANIMATION_DURATION = 1.0f,
@@ -11,14 +13,14 @@ CAPTURE_Y = 4.0f;
 
 
 Board::Board(const ShaderProgram *shaderProgram, const glm::mat4 &P, const glm::mat4 &V, const glm::mat4 &M) :
-	_time(0.0f), _shaderProgram(shaderProgram), _P(P), _V(V), _M(M), _model(Model::rect)
+	_time(0.0f), _shaderProgram(shaderProgram), _P(P), _V(V), _M(M), _model(Model::board), _texture(Texture::board)
 {
 	for (int i = 0; i < 16; ++i) {
 		int x = i % 8, y1 = i / 8, y2 = 7 - y1;
-		Piece *piece = new Piece(Model::cube, glm::vec3(x, 0.0f, y1));
+		Piece *piece = new Piece(Model::pawn, Texture::cube, glm::vec3(x, 0.0f, y1));
 		_board[Position(x, y1)] = piece;
 		_pieces.push_back(piece);
-		piece = new Piece(Model::cube, glm::vec3(x, 0.0f, y2));
+		piece = new Piece(Model::pawn, Texture::cube, glm::vec3(x, 0.0f, y2));
 		_board[Position(x, y2)] = piece;
 		_pieces.push_back(piece);
 	}
@@ -38,11 +40,12 @@ void Board::render() const
 {
 	glm::mat4 PVM = _P * _V * glm::scale(_M, glm::vec3(4.0f, 1.0f, 4.0f));
 	glUniformMatrix4fv(_shaderProgram->getUniform("PVM"), 1, GL_FALSE, glm::value_ptr(PVM));
-	glUniform4f(_shaderProgram->getUniform("color"), .0f, .0f, .0f, 1.0f);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, _texture);
+	glUniform1i(_shaderProgram->getUniform("tex"), 0);
 	_model->render();
 
-	glm::mat4 pieceM = glm::translate(glm::scale(_M, glm::vec3(-1.0f, 1.0f, 1.0f)), glm::vec3(-3.5f, 1.0f, -3.5f));
-	glUniform4f(_shaderProgram->getUniform("color"), 1.0f, .0f, .0f, 1.0f);
+	glm::mat4 pieceM = glm::translate(glm::scale(_M, glm::vec3(-1.0f, 1.0f, 1.0f)), glm::vec3(-3.5f, 0.0f, -3.5f));
 	for (auto piece : _pieces)
 		piece->render(_shaderProgram, _P, _V, pieceM);
 }

@@ -1,11 +1,12 @@
 #version 330 core
 
+in vec2 iUV;
+
 out vec4 pixelColor;
 
-uniform vec4 color = vec4(.0f, .0f, .0f, 1.0f);
-
+uniform sampler2D tex;
 
 void main()
 {
-	pixelColor = color;
+	pixelColor = texture(tex, iUV);
 }
