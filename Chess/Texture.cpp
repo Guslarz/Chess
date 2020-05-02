@@ -5,7 +5,7 @@
 #include "lodepng.h"
 
 
-GLuint Texture::cube, Texture::board;
+GLuint Texture::cube, Texture::board, Texture::white, Texture::black;
 
 
 GLuint Texture::fromPNGFile(const char *filename)
@@ -30,10 +30,15 @@ void Texture::loadTextures()
 {
 	cube = fromPNGFile("textures/cube.png");
 	board = fromPNGFile("textures/board.png");
+	white = fromPNGFile("textures/white.png");
+	black = fromPNGFile("textures/black.png");
 }
 
 
 void Texture::deleteTextures()
 {
 	glDeleteTextures(1, &cube);
+	glDeleteTextures(1, &board);
+	glDeleteTextures(1, &white);
+	glDeleteTextures(1, &black);
 }

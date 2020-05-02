@@ -16,15 +16,30 @@ CAPTURE_Y = 4.0f;
 Board::Board(const ShaderProgram *shaderProgram, const glm::mat4 &P, const glm::mat4 &V, const glm::mat4 &M) :
 	_time(0.0f), _shaderProgram(shaderProgram), _P(P), _V(V), _M(M), _object(Model::board, Texture::board)
 {
-	for (int i = 0; i < 16; ++i) {
-		int x = i % 8, y1 = i / 8, y2 = 7 - y1;
-		Piece *piece = new Piece(Model::queen, Texture::cube, glm::vec3(x, 0.0f, y1));
-		_board[Position(x, y1)] = piece;
-		_pieces.push_back(piece);
-		piece = new Piece(Model::king, Texture::cube, glm::vec3(x, 0.0f, y2));
-		_board[Position(x, y2)] = piece;
-		_pieces.push_back(piece);
+	for (unsigned int i = 0; i < 8; ++i) {
+		addPiece(Model::pawn, Texture::white, i, 1);
+		addPiece(Model::pawn, Texture::black, i, 6);
 	}
+	addPiece(Model::rook, Texture::white, 0, 0);
+	addPiece(Model::rook, Texture::white, 7, 0);
+	addPiece(Model::rook, Texture::black, 0, 7);
+	addPiece(Model::rook, Texture::black, 7, 7);
+
+	addPiece(Model::knightWhite, Texture::white, 1, 0);
+	addPiece(Model::knightWhite, Texture::white, 6, 0);
+	addPiece(Model::knightBlack, Texture::black, 1, 7);
+	addPiece(Model::knightBlack, Texture::black, 6, 7);
+
+	addPiece(Model::bishop, Texture::white, 2, 0);
+	addPiece(Model::bishop, Texture::white, 5, 0);
+	addPiece(Model::bishop, Texture::black, 2, 7);
+	addPiece(Model::bishop, Texture::black, 5, 7);
+
+	addPiece(Model::queen, Texture::white, 3, 0);
+	addPiece(Model::queen, Texture::black, 3, 7);
+
+	addPiece(Model::king, Texture::white, 4, 0);
+	addPiece(Model::king, Texture::black, 4, 7);
 }
 
 
@@ -39,13 +54,15 @@ Board::~Board()
 
 void Board::render() const
 {
-	glm::mat4 PVM = _P * _V * glm::scale(_M, glm::vec3(4.0f, 1.0f, 4.0f));
-	glUniformMatrix4fv(_shaderProgram->getUniform("PVM"), 1, GL_FALSE, glm::value_ptr(PVM));
+	glm::mat4 M = glm::scale(_M, glm::vec3(4.0f, 1.0f, 4.0f));
+	glUniformMatrix4fv(_shaderProgram->getUniform("P"), 1, GL_FALSE, glm::value_ptr(_P));
+	glUniformMatrix4fv(_shaderProgram->getUniform("V"), 1, GL_FALSE, glm::value_ptr(_V));
+	glUniformMatrix4fv(_shaderProgram->getUniform("M"), 1, GL_FALSE, glm::value_ptr(M));
 	_object.render(_shaderProgram);
 
-	glm::mat4 pieceM = glm::translate(glm::scale(_M, glm::vec3(-1.0f, 1.0f, 1.0f)), glm::vec3(-3.5f, 1.0f, -3.5f));
+	glm::mat4 pieceM = glm::translate(_M, glm::vec3(-3.5f, 1.0f, -3.5f));
 	for (auto piece : _pieces)
-		piece->render(_shaderProgram, _P, _V, pieceM);
+		piece->render(_shaderProgram, pieceM);
 }
 
 
@@ -92,6 +109,14 @@ bool Board::finished() const
 		if (!animation->finished(_time))
 			return true;
 	return false;
+}
+
+
+void Board::addPiece(const Model *model, GLuint texture, unsigned int x, unsigned int y)
+{
+	Piece *piece = new Piece(model, texture, glm::vec3(x, 0.0f, y));
+	_board[Position(x, y)] = piece;
+	_pieces.push_back(piece);
 }
 
 

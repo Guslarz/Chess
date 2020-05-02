@@ -175,7 +175,7 @@ void initOpenGLProgram(GLFWwindow *window)
 	Texture::loadTextures();
 	P = glm::perspective(FOV, static_cast<float>(INITIAL_WIDTH) / INITIAL_HEIGHT, Z_NEAR, Z_FAR);
 	updateVMatrix(0.0f);
-	M = unitMatrix;
+	M = glm::scale(unitMatrix, glm::vec3(-1.0f, 1.0f, 1.0f));
 
 	glClearColor(.5f, .5f, .5f, 1.0f);
 	glEnable(GL_DEPTH_TEST);
@@ -224,7 +224,7 @@ void updateVMatrix(float time)
 {
 	static float distance = 15.0f,
 		angleVertical = PI / 4.0f,
-		angleHorizontal = 0.0f;
+		angleHorizontal = PI;
 
 	distance += speed * time;
 	if (distance <= 1.0f) distance = 1.0f;

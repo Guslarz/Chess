@@ -14,7 +14,7 @@ class Piece
 public:
 	Piece(const Model*, GLuint, const glm::vec3&);
 
-	void render(const ShaderProgram*, const glm::mat4&, const glm::mat4&, const glm::mat4&) const;
+	void render(const ShaderProgram*, const glm::mat4&) const;
 
 	const glm::vec3& position() const { return _position; }
 	void setPosition(const glm::vec3 &position) { _position = position; }

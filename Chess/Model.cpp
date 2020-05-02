@@ -5,7 +5,7 @@
 #include <glm/glm.hpp>
 
 
-const Model *Model::cube, *Model::board, *Model::pawn, *Model::bishop, *Model::knight, *Model::rook, *Model::king, *Model::queen;
+const Model *Model::cube, *Model::board, *Model::pawn, *Model::bishop, *Model::knightWhite, *Model::knightBlack, *Model::rook, *Model::king, *Model::queen;
 
 
 
@@ -17,14 +17,14 @@ Model::Model(const std::vector<float> &vertices, const std::vector<float> &norma
 void Model::render() const
 {
 	glEnableVertexAttribArray(0);
-	//glEnableVertexAttribArray(1);
+	glEnableVertexAttribArray(1);
 	glEnableVertexAttribArray(2);
 	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, _vertices.data());
-	//glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, _normals.data());
+	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 0, _normals.data());
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, _uvs.data());
 	glDrawArrays(GL_TRIANGLES, 0, _count);
 	glDisableVertexAttribArray(0);
-	//glDisableVertexAttribArray(1);
+	glDisableVertexAttribArray(1);
 	glDisableVertexAttribArray(2);
 }
 
@@ -35,7 +35,8 @@ void Model::loadModels()
 	board = fromOBJFile("models/board.obj");
 	pawn = fromOBJFile("models/pawn.obj");
 	bishop = fromOBJFile("models/bishop.obj");
-	knight = fromOBJFile("models/knight.obj");
+	knightWhite = fromOBJFile("models/knightwhite.obj");
+	knightBlack = fromOBJFile("models/knightblack.obj");
 	rook = fromOBJFile("models/rook.obj");
 	king = fromOBJFile("models/king.obj");
 	queen = fromOBJFile("models/queen.obj");
@@ -48,7 +49,8 @@ void Model::deleteModels()
 	delete board;
 	delete pawn;
 	delete bishop;
-	delete knight;
+	delete knightWhite;
+	delete knightBlack;
 	delete rook;
 	delete king;
 	delete queen;
@@ -58,7 +60,7 @@ void Model::deleteModels()
 Model* Model::fromOBJFile(const std::string &filename)
 {
 	std::vector<glm::vec4> tmpVertices;
-	std::vector<glm::vec3> tmpNormals;
+	std::vector<glm::vec4> tmpNormals;
 	std::vector<glm::vec2> tmpUvs;
 	std::vector<unsigned int> vertexIndices, normalIndices, uvIndices;
 	std::ifstream file(filename);
@@ -77,7 +79,7 @@ Model* Model::fromOBJFile(const std::string &filename)
 		}
 		else if (head == "vn") {
 			file >> x >> y >> z;
-			tmpNormals.push_back(glm::vec3(x, y, z));
+			tmpNormals.push_back(glm::vec4(x, y, z, 0.0f));
 		}
 		else if (head == "f") {
 			std::getline(file, line);
@@ -109,6 +111,7 @@ Model* Model::fromOBJFile(const std::string &filename)
 		normals.push_back(normal.x);
 		normals.push_back(normal.y);
 		normals.push_back(normal.z);
+		normals.push_back(normal.w);
 	}
 	for (auto &index : uvIndices) {
 		auto &uv = tmpUvs[index];
