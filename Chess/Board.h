@@ -21,8 +21,7 @@ class Board
 	const ShaderProgram *_shaderProgram;
 	const glm::mat4 &_P, &_V, &_M;
 
-	const Model *_model;
-	GLuint _texture;
+	Object _object;
 
 public:
 	Board(const ShaderProgram*, const glm::mat4&, const glm::mat4&, const glm::mat4&);

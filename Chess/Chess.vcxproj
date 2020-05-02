@@ -136,6 +136,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="Move.cpp" />
+    <ClCompile Include="Object.cpp" />
     <ClCompile Include="Parser.cpp" />
     <ClCompile Include="Piece.cpp" />
     <ClCompile Include="Position.cpp" />
@@ -149,6 +150,7 @@
     <ClInclude Include="lodepng.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="Move.h" />
+    <ClInclude Include="Object.h" />
     <ClInclude Include="Parser.h" />
     <ClInclude Include="Piece.h" />
     <ClInclude Include="Position.h" />

@@ -2,15 +2,13 @@
 
 #include <glm/glm.hpp>
 
-#include "Model.h"
 #include "Position.h"
-#include "ShaderProgram.h"
+#include "Object.h"
 
 
 class Piece
 {
-	const Model *_model;
-	GLuint _texture;
+	Object _object;
 	glm::vec3 _position;
 
 public:

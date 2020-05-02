@@ -5,7 +5,7 @@
 #include <glm/glm.hpp>
 
 
-const Model *Model::cube, *Model::pawn, *Model::board;
+const Model *Model::cube, *Model::board, *Model::pawn, *Model::bishop, *Model::knight, *Model::rook, *Model::king, *Model::queen;
 
 
 
@@ -34,6 +34,11 @@ void Model::loadModels()
 	cube = fromOBJFile("models/cube.obj");
 	board = fromOBJFile("models/board.obj");
 	pawn = fromOBJFile("models/pawn.obj");
+	bishop = fromOBJFile("models/bishop.obj");
+	knight = fromOBJFile("models/knight.obj");
+	rook = fromOBJFile("models/rook.obj");
+	king = fromOBJFile("models/king.obj");
+	queen = fromOBJFile("models/queen.obj");
 }
 
 
@@ -42,6 +47,11 @@ void Model::deleteModels()
 	delete cube;
 	delete board;
 	delete pawn;
+	delete bishop;
+	delete knight;
+	delete rook;
+	delete king;
+	delete queen;
 }
 
 
@@ -85,18 +95,6 @@ Model* Model::fromOBJFile(const std::string &filename)
 			normalIndices.push_back(normalIndex[2] - 1);
 		}
 	}
-
-	float maxAbsValue = 0;
-	for (auto &vertex : tmpVertices) {
-		if (std::abs(vertex.x) > maxAbsValue)
-			maxAbsValue = std::abs(vertex.x);
-		if (std::abs(vertex.y) > maxAbsValue)
-			maxAbsValue = std::abs(vertex.y);
-		if (std::abs(vertex.z) > maxAbsValue)
-			maxAbsValue = std::abs(vertex.z);
-	}
-	for (auto &vertex : tmpVertices)
-		vertex.w = maxAbsValue;
 
 	std::vector<float> vertices, normals, uvs;
 	for (auto &index : vertexIndices) {

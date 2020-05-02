@@ -8,19 +8,20 @@
 
 constexpr float
 ANIMATION_DURATION = 1.0f,
-CURVE_MAX_Y = 4.0f,
+MOVE_DURATION_DENOMINATOR = 6.0f,
+CURVE_MAX_Y = 2.0f,
 CAPTURE_Y = 4.0f;
 
 
 Board::Board(const ShaderProgram *shaderProgram, const glm::mat4 &P, const glm::mat4 &V, const glm::mat4 &M) :
-	_time(0.0f), _shaderProgram(shaderProgram), _P(P), _V(V), _M(M), _model(Model::board), _texture(Texture::board)
+	_time(0.0f), _shaderProgram(shaderProgram), _P(P), _V(V), _M(M), _object(Model::board, Texture::board)
 {
 	for (int i = 0; i < 16; ++i) {
 		int x = i % 8, y1 = i / 8, y2 = 7 - y1;
-		Piece *piece = new Piece(Model::pawn, Texture::cube, glm::vec3(x, 0.0f, y1));
+		Piece *piece = new Piece(Model::queen, Texture::cube, glm::vec3(x, 0.0f, y1));
 		_board[Position(x, y1)] = piece;
 		_pieces.push_back(piece);
-		piece = new Piece(Model::pawn, Texture::cube, glm::vec3(x, 0.0f, y2));
+		piece = new Piece(Model::king, Texture::cube, glm::vec3(x, 0.0f, y2));
 		_board[Position(x, y2)] = piece;
 		_pieces.push_back(piece);
 	}
@@ -40,12 +41,9 @@ void Board::render() const
 {
 	glm::mat4 PVM = _P * _V * glm::scale(_M, glm::vec3(4.0f, 1.0f, 4.0f));
 	glUniformMatrix4fv(_shaderProgram->getUniform("PVM"), 1, GL_FALSE, glm::value_ptr(PVM));
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, _texture);
-	glUniform1i(_shaderProgram->getUniform("tex"), 0);
-	_model->render();
+	_object.render(_shaderProgram);
 
-	glm::mat4 pieceM = glm::translate(glm::scale(_M, glm::vec3(-1.0f, 1.0f, 1.0f)), glm::vec3(-3.5f, 0.0f, -3.5f));
+	glm::mat4 pieceM = glm::translate(glm::scale(_M, glm::vec3(-1.0f, 1.0f, 1.0f)), glm::vec3(-3.5f, 1.0f, -3.5f));
 	for (auto piece : _pieces)
 		piece->render(_shaderProgram, _P, _V, pieceM);
 }
@@ -77,8 +75,10 @@ void Board::applyMove(const Move *move)
 
 void Board::finishAnimations()
 {
-	for (auto animation : _animations)
+	for (auto animation : _animations) {
+		animation->finish();
 		delete animation;
+	}
 	_animations.erase(_animations.cbegin(), _animations.cend());
 	_time = 0.0f;
 }
@@ -118,7 +118,9 @@ void Board::movePiece(const Position &from, const Position &to)
 	_board[to] = piece;
 	glm::vec3 vecFrom = from,
 		vecTo = to;
-	_animations.push_back(new CurveAnimation(0.0f, ANIMATION_DURATION, piece, vecFrom, vecTo, CURVE_MAX_Y, [=]() {
+	float x = static_cast<float>(to.x() - from.x()),
+		y = static_cast<float>(to.y() - from.y());
+	_animations.push_back(new CurveAnimation(0.0f, ANIMATION_DURATION + std::sqrt(x * x + y * y) / MOVE_DURATION_DENOMINATOR, piece, vecFrom, vecTo, CURVE_MAX_Y, [=]() {
 		piece->setPosition(vecTo);
 	}));
 }

@@ -26,17 +26,20 @@
     <Filter Include="Board\Animation">
       <UniqueIdentifier>{df29dcc7-cee4-44d6-be48-7adeab4b96a6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Model">
-      <UniqueIdentifier>{ece1e945-2468-4c1e-b878-74ddce4897d7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ShaderProgram">
       <UniqueIdentifier>{8c183d92-65a8-4c90-ab28-71ecfb4fda29}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Texture">
+    <Filter Include="Object">
+      <UniqueIdentifier>{bdf6b9f8-d4df-4032-9cea-5ad7f25aea33}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Texture">
       <UniqueIdentifier>{4c397fe6-50a1-449b-be70-3206f705bbf3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Texture\lodepng">
+    <Filter Include="Object\Texture\lodepng">
       <UniqueIdentifier>{9e1cf833-3b9f-4364-ae58-5ccfc385f09b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Model">
+      <UniqueIdentifier>{ece1e945-2468-4c1e-b878-74ddce4897d7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -60,7 +63,7 @@
       <Filter>Board\Piece</Filter>
     </ClCompile>
     <ClCompile Include="Model.cpp">
-      <Filter>Model</Filter>
+      <Filter>Object\Model</Filter>
     </ClCompile>
     <ClCompile Include="Animation.cpp">
       <Filter>Board\Animation</Filter>
@@ -69,10 +72,13 @@
       <Filter>ShaderProgram</Filter>
     </ClCompile>
     <ClCompile Include="lodepng.cpp">
-      <Filter>Texture\lodepng</Filter>
+      <Filter>Object\Texture\lodepng</Filter>
     </ClCompile>
     <ClCompile Include="Texture.cpp">
-      <Filter>Texture</Filter>
+      <Filter>Object\Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="Object.cpp">
+      <Filter>Object</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -95,7 +101,7 @@
       <Filter>Board\Piece</Filter>
     </ClInclude>
     <ClInclude Include="Model.h">
-      <Filter>Model</Filter>
+      <Filter>Object\Model</Filter>
     </ClInclude>
     <ClInclude Include="Animation.h">
       <Filter>Board\Animation</Filter>
@@ -104,10 +110,13 @@
       <Filter>ShaderProgram</Filter>
     </ClInclude>
     <ClInclude Include="lodepng.h">
-      <Filter>Texture\lodepng</Filter>
+      <Filter>Object\Texture\lodepng</Filter>
     </ClInclude>
     <ClInclude Include="Texture.h">
-      <Filter>Texture</Filter>
+      <Filter>Object\Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="Object.h">
+      <Filter>Object</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

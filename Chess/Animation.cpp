@@ -2,6 +2,9 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
+constexpr float
+LIFT_DURATION = 0.25f;
+
 
 Animation::Animation(float start, float stop, Piece *target, std::function<void()> callback) :
 	_start(start), _stop(stop), _target(target), _callback(callback)
@@ -13,13 +16,17 @@ PositionAnimation::PositionAnimation(float start, float stop, Piece *target, con
 {}
 
 
-void PositionAnimation::apply(float time, bool force)
+void PositionAnimation::apply(float time)
 {
 	if (time <= _start) return;
-	else if (time >= _stop) {
-		if (force)
-			_target->setPosition(getPosition(1.0f));
-	} else _target->setPosition(getPosition((time - _start) / (_stop - _start)));
+	else if (time <= _stop)
+		_target->setPosition(getPosition((time - _start) / (_stop - _start)));
+}
+
+
+void PositionAnimation::finish()
+{
+	_target->setPosition(getPosition(1.0f));
 }
 
 
@@ -36,9 +43,17 @@ CurveAnimation::CurveAnimation(float start, float stop, Piece *target, const glm
 
 glm::vec3 CurveAnimation::getPosition(float time) const
 {
-	float tmp = std::abs(0.5f - time),
-		coeff = 1.0f - (tmp < 0.25 ? tmp * 4.0f : 1.0f);
-	glm::vec3 position = _delta * time + _from;
-	position.y += _maxDeltaY * coeff;
+	glm::vec3 position(_from);
+	if (time <= LIFT_DURATION) {
+		position.y += _maxDeltaY * (time / LIFT_DURATION);
+	}
+	else if (time >= 1.0f - LIFT_DURATION) {
+		position += _delta;
+		position.y += _maxDeltaY * (1.0f - (time + LIFT_DURATION - 1.0f) / LIFT_DURATION);
+	}
+	else {
+		position += _delta * (time - LIFT_DURATION) / (1.0f - 2.0f * LIFT_DURATION);
+		position.y += _maxDeltaY;
+	}
 	return position;
 }

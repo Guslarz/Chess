@@ -16,7 +16,8 @@ public:
 	Animation(float, float, Piece*, std::function<void()> = nullptr);
 	virtual ~Animation() { if (_callback) _callback(); }
 
-	virtual void apply(float, bool = false) = 0;
+	virtual void apply(float) = 0;
+	virtual void finish() = 0;
 	virtual bool finished(float time) const { return _stop >= time; }
 	virtual Piece* target() const { return _target; }
 };
@@ -31,7 +32,8 @@ protected:
 public:
 	PositionAnimation(float, float, Piece*, const glm::vec3&, const glm::vec3&, std::function<void()> = nullptr);
 
-	virtual void apply(float, bool = false) override;
+	virtual void apply(float) override;
+	virtual void finish() override;
 
 protected:
 	virtual glm::vec3 getPosition(float) const = 0;
