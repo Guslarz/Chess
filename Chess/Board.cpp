@@ -90,6 +90,39 @@ void Board::applyMove(const Move *move)
 }
 
 
+void Board::undoMove(const Move *move)
+{
+	if (auto *castlingMove = dynamic_cast<const CastlingMove*>(move)) {
+		Piece *king = _board[castlingMove->kingTo()],
+			*rook = _board[castlingMove->rookTo()];
+		king->setPosition(castlingMove->kingFrom());
+		rook->setPosition(castlingMove->rookFrom());
+		_board[castlingMove->kingTo()] = nullptr;
+		_board[castlingMove->rookTo()] = nullptr;
+		_board[castlingMove->kingFrom()] = king;
+		_board[castlingMove->rookFrom()] = rook;
+	}
+	if (auto *promotionMove = dynamic_cast<const PromotionMove*>(move)) {
+		Piece *promoted = _board[promotionMove->to()];
+		auto it = _pieces.cbegin();
+		while (*it != promoted) ++it;
+		_pieces.erase(it);
+		delete promoted;
+		_pieces.push_back(_board[promotionMove->to()] = _captured.back());
+		_captured.pop_back();
+	}
+	if (auto *normalMove = dynamic_cast<const NormalMove*>(move)) {
+		Piece *piece = _board[normalMove->to()];
+		_board[normalMove->to()] = nullptr;
+		_board[normalMove->from()] = piece;
+		piece->setPosition(normalMove->from());
+	}
+	if (auto *captureMove = dynamic_cast<const CaptureMove*>(move)) {
+		_pieces.push_back(_captured.back());
+		_captured.pop_back();
+	}
+}
+
 void Board::finishAnimations()
 {
 	for (auto animation : _animations) {

@@ -27,6 +27,7 @@ public:
 	void render(const ShaderProgram*, const glm::mat4&) const;
 	void applyAnimations();
 	void applyMove(const Move*);
+	void undoMove(const Move*);
 	void addTime(float time) { _time += time; }
 	void finishAnimations();
 

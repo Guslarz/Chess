@@ -98,6 +98,7 @@ void errorCallback(int error, const char *description)
 
 void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods)
 {
+	const Move *move;
 	switch (action) {
 	case GLFW_PRESS:
 		switch (key) {
@@ -121,6 +122,25 @@ void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods
 			break;
 		case GLFW_KEY_SPACE:
 			paused = !paused;
+			break;
+		case GLFW_KEY_LEFT:
+			paused = true;
+			board->finishAnimations();
+			move = data->prevMove();
+			if (move) {
+				printf("%s\n", std::string(*move).c_str());
+				board->undoMove(move);
+			}
+			break;
+		case GLFW_KEY_RIGHT:
+			paused = true;
+			board->finishAnimations();
+			move = data->nextMove();
+			if (move) {
+				printf("%s\n", std::string(*move).c_str());
+				board->applyMove(move);
+				board->finishAnimations();
+			}
 			break;
 		}
 		break;
@@ -238,7 +258,7 @@ void drawScene(GLFWwindow *window)
 		board->applyAnimations();
 	}
 	board->render(mainShader, M);
-	renderSurroundings();
+	//renderSurroundings();
 
 	glfwSwapBuffers(window);
 	glfwPollEvents();
