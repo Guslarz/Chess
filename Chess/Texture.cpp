@@ -5,7 +5,7 @@
 #include "lodepng.h"
 
 
-GLuint Texture::cube, Texture::board, Texture::white, Texture::black;
+GLuint Texture::cube, Texture::board, Texture::white, Texture::black, Texture::floor, Texture::fog;
 
 
 GLuint Texture::fromPNGFile(const char *filename)
@@ -21,7 +21,8 @@ GLuint Texture::fromPNGFile(const char *filename)
 	glTexImage2D(GL_TEXTURE_2D, 0, 4, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, img.data());
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
 	return tex;
 }
 
@@ -32,6 +33,8 @@ void Texture::loadTextures()
 	board = fromPNGFile("textures/board.png");
 	white = fromPNGFile("textures/white.png");
 	black = fromPNGFile("textures/black.png");
+	floor = fromPNGFile("textures/floor.png");
+	fog = fromPNGFile("textures/fog.png");
 }
 
 
@@ -41,4 +44,6 @@ void Texture::deleteTextures()
 	glDeleteTextures(1, &board);
 	glDeleteTextures(1, &white);
 	glDeleteTextures(1, &black);
+	glDeleteTextures(1, &floor);
+	glDeleteTextures(1, &fog);
 }

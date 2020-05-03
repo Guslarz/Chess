@@ -5,6 +5,7 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include <cstdio>
 #include <cmath>
@@ -24,6 +25,7 @@ void initOpenGLProgram(GLFWwindow*);
 void freeOpenGLProgram(GLFWwindow*);
 void drawScene(GLFWwindow*);
 void updateVMatrix(float);
+void renderSurroundings();
 
 
 constexpr int
@@ -38,13 +40,15 @@ Z_NEAR = 0.01f,
 Z_FAR = 50.0f,
 SPEED = 5.0f,
 SPEED_ROT = PI / 2.0f,
-MIN_VERTICAL_ANGLE = 0.0f,
+MIN_DISTANCE = 3.0f,
+MAX_DISTANICE = 20.0f,
+MIN_VERTICAL_ANGLE = PI / 12.0f,
 MAX_VERTICAL_ANGLE = PI / 2.0f;
 
 constexpr glm::mat4 unitMatrix(1.0f);
 
 
-ShaderProgram *shaderProgram;
+ShaderProgram *mainShader, *simpleShader;
 glm::mat4 P, V, M;
 GameData *data;
 Board *board;
@@ -64,7 +68,7 @@ int main()
 	initOpenGLProgram(window);
 
 	data = new GameData("test.pgn");
-	board = new Board(shaderProgram, P, V, M);
+	board = new Board();
 	glfwSetTime(0.0);
 	while (!glfwWindowShouldClose(window)) {
 		drawScene(window);
@@ -172,7 +176,8 @@ GLFWwindow *initGLFWwindow()
 
 void initOpenGLProgram(GLFWwindow *window)
 {
-	shaderProgram = new ShaderProgram("vertex.glsl", "fragment.glsl");
+	mainShader = new ShaderProgram("vertex.glsl", "fragment.glsl");
+	simpleShader = new ShaderProgram("vertexSimple.glsl", "fragmentSimple.glsl");
 	Model::loadModels();
 	Texture::loadTextures();
 	Object::loadObjects();
@@ -180,7 +185,7 @@ void initOpenGLProgram(GLFWwindow *window)
 	updateVMatrix(0.0f);
 	M = glm::scale(unitMatrix, glm::vec3(-1.0f, 1.0f, 1.0f));
 
-	glClearColor(.5f, .5f, .5f, 1.0f);
+	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 	glEnable(GL_DEPTH_TEST);
 	glDisable(GL_CULL_FACE);
 	glEnable(GL_BLEND);
@@ -196,18 +201,22 @@ void freeOpenGLProgram(GLFWwindow *window)
 	Object::deleteObjects();
 	Texture::deleteTextures();
 	Model::deleteModels();
-	delete shaderProgram;
+	delete simpleShader;
+	delete mainShader;
 }
 
 
 void drawScene(GLFWwindow *window)
 {
-	shaderProgram->use();
+	mainShader->use();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	float time = static_cast<float>(glfwGetTime());
 	glfwSetTime(0.0);
 	updateVMatrix(time);
+
+	glUniformMatrix4fv(mainShader->getUniform("P"), 1, GL_FALSE, glm::value_ptr(P));
+	glUniformMatrix4fv(mainShader->getUniform("V"), 1, GL_FALSE, glm::value_ptr(V));
 
 	if (!paused) {
 		board->addTime(time);
@@ -221,7 +230,8 @@ void drawScene(GLFWwindow *window)
 		}
 		board->applyAnimations();
 	}
-	board->render();
+	board->render(mainShader, M);
+	renderSurroundings();
 
 	glfwSwapBuffers(window);
 	glfwPollEvents();
@@ -235,17 +245,37 @@ void updateVMatrix(float time)
 		angleHorizontal = PI;
 
 	distance += speed * time;
-	if (distance <= 1.0f) distance = 1.0f;
+	if (distance < MIN_DISTANCE) distance = MIN_DISTANCE;
+	else if (distance > MAX_DISTANICE) distance = MAX_DISTANICE;
 
 	angleHorizontal += speedHorizontal * time;
 	if (angleHorizontal >= PI2) angleHorizontal -= PI2;
 	else if (angleHorizontal <= -PI2) angleHorizontal += PI2;
 
 	angleVertical += speedVertical * time;
-	if (angleVertical >= MAX_VERTICAL_ANGLE) angleVertical = MAX_VERTICAL_ANGLE;
-	else if (angleVertical <= MIN_VERTICAL_ANGLE) angleVertical = MIN_VERTICAL_ANGLE;
+	if (angleVertical > MAX_VERTICAL_ANGLE) angleVertical = MAX_VERTICAL_ANGLE;
+	else if (angleVertical < MIN_VERTICAL_ANGLE) angleVertical = MIN_VERTICAL_ANGLE;
 
 	V = glm::translate(unitMatrix, glm::vec3(0.0f, 0.0f, -distance));
 	V = glm::rotate(V, angleVertical, glm::vec3(1.0f, 0.0f, 0.0f));
 	V = glm::rotate(V, angleHorizontal, glm::vec3(0.0f, 1.0f, 0.0f));
+}
+
+
+void renderSurroundings()
+{
+	static Object floor(Model::floor, Texture::floor),
+		walls(Model::cylinder, Texture::fog);
+
+	simpleShader->use();
+
+	glm::vec3 scale(25.0f, 1.0f, 25.0f);
+	glUniformMatrix4fv(simpleShader->getUniform("P"), 1, GL_FALSE, glm::value_ptr(P));
+	glUniformMatrix4fv(simpleShader->getUniform("V"), 1, GL_FALSE, glm::value_ptr(V));
+	glUniformMatrix4fv(simpleShader->getUniform("M"), 1, GL_FALSE, glm::value_ptr(glm::scale(M, scale)));
+	floor.render(simpleShader);
+
+	scale.y = 25.0f;
+	glUniformMatrix4fv(simpleShader->getUniform("M"), 1, GL_FALSE, glm::value_ptr(glm::scale(M, scale)));
+	walls.render(simpleShader);
 }

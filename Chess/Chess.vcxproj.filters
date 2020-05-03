@@ -129,5 +129,11 @@
     <None Include="vertex.glsl">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="fragmentSimple.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="vertexSimple.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

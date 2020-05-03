@@ -13,8 +13,8 @@ CURVE_MAX_Y = 2.0f,
 CAPTURE_Y = 4.0f;
 
 
-Board::Board(const ShaderProgram *shaderProgram, const glm::mat4 &P, const glm::mat4 &V, const glm::mat4 &M) :
-	_time(0.0f), _shaderProgram(shaderProgram), _P(P), _V(V), _M(M), _boardObject(Model::board, Texture::board), _boardBorderObject(Model::boardBorder, Texture::white)
+Board::Board() :
+	_time(0.0f), _boardObject(Model::board, Texture::board), _boardBorderObject(Model::boardBorder, Texture::white)
 {
 	for (unsigned int i = 0; i < 8; ++i) {
 		addPiece(Object::piece[WHITE][PAWN], i, 1);
@@ -52,18 +52,17 @@ Board::~Board()
 }
 
 
-void Board::render() const
+void Board::render(const ShaderProgram *shaderProgram, const glm::mat4 &M) const
 {
-	glm::mat4 M = glm::scale(_M, glm::vec3(4.0f, 1.0f, 4.0f));
-	glUniformMatrix4fv(_shaderProgram->getUniform("P"), 1, GL_FALSE, glm::value_ptr(_P));
-	glUniformMatrix4fv(_shaderProgram->getUniform("V"), 1, GL_FALSE, glm::value_ptr(_V));
-	glUniformMatrix4fv(_shaderProgram->getUniform("M"), 1, GL_FALSE, glm::value_ptr(M));
-	_boardObject.render(_shaderProgram);
-	_boardBorderObject.render(_shaderProgram);
+	glm::mat4 boardM = glm::scale(M, glm::vec3(4.0f, 1.0f, 4.0f));
+	glUniformMatrix4fv(shaderProgram->getUniform("M"), 1, GL_FALSE, glm::value_ptr(boardM));
+	glUniform1f(shaderProgram->getUniform("alpha"), 1.0f);
+	_boardObject.render(shaderProgram);
+	_boardBorderObject.render(shaderProgram);
 
-	glm::mat4 pieceM = glm::translate(_M, glm::vec3(-3.5f, 1.0f, -3.5f));
+	glm::mat4 pieceM = glm::translate(M, glm::vec3(-3.5f, 1.0f, -3.5f));
 	for (auto piece : _pieces)
-		piece->render(_shaderProgram, pieceM);
+		piece->render(shaderProgram, pieceM);
 }
 
 

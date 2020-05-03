@@ -159,8 +159,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="fragment.glsl" />
+    <None Include="fragmentSimple.glsl" />
     <None Include="test.pgn" />
     <None Include="vertex.glsl" />
+    <None Include="vertexSimple.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
