@@ -63,3 +63,36 @@ private:
 	virtual glm::vec3 getPosition(float) const override;
 };
 
+
+class OpacityAnimation :
+	public Animation
+{
+public:
+	OpacityAnimation(float, float, Piece*, std::function<void()> = nullptr);
+
+	virtual void apply(float) override;
+	virtual void finish() override;
+
+protected:
+	virtual float getOpacity(float) const = 0;
+};
+
+
+class FadeAnimation :
+	public OpacityAnimation
+{
+	using OpacityAnimation::OpacityAnimation;
+
+private:
+	float getOpacity(float) const;
+};
+
+
+class ShowAnimation :
+	public OpacityAnimation
+{
+	using OpacityAnimation::OpacityAnimation;
+
+private:
+	float getOpacity(float) const;
+};

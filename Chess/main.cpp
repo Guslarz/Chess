@@ -48,15 +48,12 @@ ShaderProgram *shaderProgram;
 glm::mat4 P, V, M;
 GameData *data;
 Board *board;
+bool paused = false;
 
 float
 speed = 0.0f,
 speedVertical = 0.0f,
 speedHorizontal = 0.0f;
-
-
-GLuint VertexArrayID;
-GLuint vertexbuffer;
 
 
 int main()
@@ -110,6 +107,9 @@ void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods
 			break;
 		case GLFW_KEY_X:
 			speed = -SPEED;
+			break;
+		case GLFW_KEY_SPACE:
+			paused = !paused;
 			break;
 		}
 		break;
@@ -182,11 +182,12 @@ void initOpenGLProgram(GLFWwindow *window)
 
 	glClearColor(.5f, .5f, .5f, 1.0f);
 	glEnable(GL_DEPTH_TEST);
+	glDisable(GL_CULL_FACE);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	glfwSetKeyCallback(window, keyCallback);
 	glfwSetWindowSizeCallback(window, windowSizeCallback);
-
-	shaderProgram->use();
 }
 
 
@@ -201,22 +202,25 @@ void freeOpenGLProgram(GLFWwindow *window)
 
 void drawScene(GLFWwindow *window)
 {
+	shaderProgram->use();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	float time = static_cast<float>(glfwGetTime());
 	glfwSetTime(0.0);
 	updateVMatrix(time);
 
-	board->addTime(time);
-	if (board->finished()) {
-		const Move *move = data->nextMove();
-		if (move) {
-			printf("%s\n", std::string(*move).c_str());
-			board->finishAnimations();
-			board->applyMove(move);
+	if (!paused) {
+		board->addTime(time);
+		if (board->finished()) {
+			const Move *move = data->nextMove();
+			if (move) {
+				printf("%s\n", std::string(*move).c_str());
+				board->finishAnimations();
+				board->applyMove(move);
+			}
 		}
+		board->applyAnimations();
 	}
-	board->applyAnimations();
 	board->render();
 
 	glfwSwapBuffers(window);

@@ -49,11 +49,42 @@ glm::vec3 CurveAnimation::getPosition(float time) const
 	}
 	else if (time >= 1.0f - LIFT_DURATION) {
 		position += _delta;
-		position.y += _maxDeltaY * (1.0f - (time + LIFT_DURATION - 1.0f) / LIFT_DURATION);
+		position.y += _maxDeltaY * (1.0f - (time - 1.0f + LIFT_DURATION) / LIFT_DURATION);
 	}
 	else {
 		position += _delta * (time - LIFT_DURATION) / (1.0f - 2.0f * LIFT_DURATION);
 		position.y += _maxDeltaY;
 	}
 	return position;
+}
+
+
+OpacityAnimation::OpacityAnimation(float start, float stop, Piece *target, std::function<void()> callback) :
+	Animation(start, stop, target, callback)
+{}
+
+
+void OpacityAnimation::apply(float time)
+{
+	if (time <= _start) return;
+	else if (time <= _stop)
+		_target->setOpacity(getOpacity((time - _start) / (_stop - _start)));
+}
+
+
+void OpacityAnimation::finish()
+{
+	_target->setOpacity(getOpacity(1.0f));
+}
+
+
+float FadeAnimation::getOpacity(float time) const
+{
+	return 1.0f - time;
+}
+
+
+float ShowAnimation::getOpacity(float time) const
+{
+	return time;
 }

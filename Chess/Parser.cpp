@@ -287,7 +287,7 @@ const std::regex Parser::moveRegex(
 	"([1-8]?)"
 	"(x?)"
 	"([a-h][1-8])"
-	"((?:=[KQRBN])?)"
+	"(?:=([KQRBN]))?"
 	"([\\+#]?)"
 	"$"
 );

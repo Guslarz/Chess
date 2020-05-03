@@ -19,7 +19,7 @@ public:
 	static void loadModels();
 	static void deleteModels();
 
-	static const Model *cube, *board, *pawn, *bishop, *knightWhite, *knightBlack, *rook, *king, *queen;
+	static const Model *cube, *board, *boardBorder, *pawn, *bishop, *knightWhite, *knightBlack, *rook, *king, *queen;
 
 private:
 	static Model* fromOBJFile(const std::string&);

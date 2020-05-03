@@ -5,7 +5,8 @@
 #include <glm/glm.hpp>
 
 
-const Model *Model::cube, *Model::board, *Model::pawn, *Model::bishop, *Model::knightWhite, *Model::knightBlack, *Model::rook, *Model::king, *Model::queen;
+const Model *Model::cube, *Model::board, *Model::boardBorder, *Model::pawn, *Model::bishop, 
+*Model::knightWhite, *Model::knightBlack, *Model::rook, *Model::king, *Model::queen;
 
 
 
@@ -33,6 +34,7 @@ void Model::loadModels()
 {
 	cube = fromOBJFile("models/cube.obj");
 	board = fromOBJFile("models/board.obj");
+	boardBorder = fromOBJFile("models/boardborder.obj");
 	pawn = fromOBJFile("models/pawn.obj");
 	bishop = fromOBJFile("models/bishop.obj");
 	knightWhite = fromOBJFile("models/knightwhite.obj");
@@ -47,6 +49,7 @@ void Model::deleteModels()
 {
 	delete cube;
 	delete board;
+	delete boardBorder;
 	delete pawn;
 	delete bishop;
 	delete knightWhite;

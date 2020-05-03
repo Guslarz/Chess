@@ -21,7 +21,7 @@ class Board
 	const ShaderProgram *_shaderProgram;
 	const glm::mat4 &_P, &_V, &_M;
 
-	Object _object;
+	Object _boardObject, _boardBorderObject;
 
 public:
 	Board(const ShaderProgram*, const glm::mat4&, const glm::mat4&, const glm::mat4&);
@@ -36,9 +36,10 @@ public:
 	bool finished() const;
 
 private:
-	void addPiece(const Object*, unsigned int, unsigned int);
+	Piece* addPiece(const Object*, unsigned int, unsigned int);
 	void capturePieceAt(const Position&);
 	void movePiece(const Position&, const Position&);
 	void makeCastlingMove(const Position&, const Position&, const Position&, const Position&);
+	void makePromotionMove(const Position&, Side, PieceType);
 };
 

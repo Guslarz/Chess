@@ -14,7 +14,7 @@ CAPTURE_Y = 4.0f;
 
 
 Board::Board(const ShaderProgram *shaderProgram, const glm::mat4 &P, const glm::mat4 &V, const glm::mat4 &M) :
-	_time(0.0f), _shaderProgram(shaderProgram), _P(P), _V(V), _M(M), _object(Model::board, Texture::board)
+	_time(0.0f), _shaderProgram(shaderProgram), _P(P), _V(V), _M(M), _boardObject(Model::board, Texture::board), _boardBorderObject(Model::boardBorder, Texture::white)
 {
 	for (unsigned int i = 0; i < 8; ++i) {
 		addPiece(Object::piece[WHITE][PAWN], i, 1);
@@ -58,7 +58,8 @@ void Board::render() const
 	glUniformMatrix4fv(_shaderProgram->getUniform("P"), 1, GL_FALSE, glm::value_ptr(_P));
 	glUniformMatrix4fv(_shaderProgram->getUniform("V"), 1, GL_FALSE, glm::value_ptr(_V));
 	glUniformMatrix4fv(_shaderProgram->getUniform("M"), 1, GL_FALSE, glm::value_ptr(M));
-	_object.render(_shaderProgram);
+	_boardObject.render(_shaderProgram);
+	_boardBorderObject.render(_shaderProgram);
 
 	glm::mat4 pieceM = glm::translate(_M, glm::vec3(-3.5f, 1.0f, -3.5f));
 	for (auto piece : _pieces)
@@ -82,7 +83,7 @@ void Board::applyMove(const Move *move)
 		movePiece(normalMove->from(), normalMove->to());
 	}
 	if (auto *promotionMove = dynamic_cast<const PromotionMove*>(move)) {
-
+		makePromotionMove(promotionMove->to(), promotionMove->side(), promotionMove->promotion());
 	}
 	if (auto *castlingMove = dynamic_cast<const CastlingMove*>(move)) {
 		makeCastlingMove(castlingMove->kingFrom(), castlingMove->kingTo(), castlingMove->rookFrom(), castlingMove->rookTo());
@@ -112,11 +113,12 @@ bool Board::finished() const
 }
 
 
-void Board::addPiece(const Object *object, unsigned int x, unsigned int y)
+Piece* Board::addPiece(const Object *object, unsigned int x, unsigned int y)
 {
 	Piece *piece = new Piece(object, glm::vec3(x, 0.0f, y));
 	_board[Position(x, y)] = piece;
 	_pieces.push_back(piece);
+	return piece;
 }
 
 
@@ -124,10 +126,7 @@ void Board::capturePieceAt(const Position &position)
 {
 	Piece *piece = _board[position];
 	_board[position] = nullptr;
-	glm::vec3 from = position,
-		to = from;
-	to.y = CAPTURE_Y;
-	_animations.push_back(new StraightAnimation(0.0f, ANIMATION_DURATION, piece, from, to, [=]() {
+	_animations.push_back(new FadeAnimation(0.0f, ANIMATION_DURATION, piece, [=]() {
 		auto it = _pieces.cbegin();
 		while (*it != piece) ++it;
 		_pieces.erase(it);
@@ -145,9 +144,7 @@ void Board::movePiece(const Position &from, const Position &to)
 		vecTo = to;
 	float x = static_cast<float>(to.x() - from.x()),
 		y = static_cast<float>(to.y() - from.y());
-	_animations.push_back(new CurveAnimation(0.0f, ANIMATION_DURATION + std::sqrt(x * x + y * y) / MOVE_DURATION_DENOMINATOR, piece, vecFrom, vecTo, CURVE_MAX_Y, [=]() {
-		piece->setPosition(vecTo);
-	}));
+	_animations.push_back(new CurveAnimation(0.0f, ANIMATION_DURATION + std::sqrt(x * x + y * y) / MOVE_DURATION_DENOMINATOR, piece, vecFrom, vecTo, CURVE_MAX_Y));
 }
 
 
@@ -159,10 +156,21 @@ void Board::makeCastlingMove(const Position &kingFrom, const Position &kingTo, c
 	_board[kingTo] = king;
 	_board[rookTo] = rook;
 
-	_animations.push_back(new CurveAnimation(0.0f, ANIMATION_DURATION, king, kingFrom, kingTo, CURVE_MAX_Y, [=]() {
-		king->setPosition(kingTo);
+	_animations.push_back(new CurveAnimation(0.0f, ANIMATION_DURATION, king, kingFrom, kingTo, CURVE_MAX_Y));
+	_animations.push_back(new StraightAnimation(0.0f, ANIMATION_DURATION, rook,  rookFrom, rookTo));
+}
+
+
+void Board::makePromotionMove(const Position &position, Side side, PieceType type)
+{
+	Piece *before = _board[position],
+		*after = addPiece(Object::piece[side][type], position.x(), position.y());
+
+	_animations.push_back(new FadeAnimation(ANIMATION_DURATION, 2.0f * ANIMATION_DURATION, before, [=]() {
+		auto it = _pieces.cbegin();
+		while (*it != before) ++it;
+		_pieces.erase(it);
+		_captured.push_back(before);
 	}));
-	_animations.push_back(new StraightAnimation(0.0f, ANIMATION_DURATION, rook,  rookFrom, rookTo, [=]() {
-		rook->setPosition(rookTo);
-	}));
+	_animations.push_back(new ShowAnimation(ANIMATION_DURATION, 2.0f * ANIMATION_DURATION, after));
 }
