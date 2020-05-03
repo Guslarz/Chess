@@ -54,7 +54,7 @@ ShaderProgram *mainShader, *simpleShader;
 glm::mat4 P, V, M;
 GameData *data;
 Board *board;
-bool paused = false;
+bool paused = true;
 
 float
 speed = 0.0f,

@@ -18,7 +18,7 @@ public:
 
 	virtual void apply(float) = 0;
 	virtual void finish() = 0;
-	virtual bool finished(float time) const { return _stop >= time; }
+	virtual bool finished(float time) const { return time >= _stop; }
 	virtual Piece* target() const { return _target; }
 };
 

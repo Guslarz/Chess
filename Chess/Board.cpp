@@ -140,8 +140,8 @@ bool Board::finished() const
 		return true;
 	for (auto animation : _animations)
 		if (!animation->finished(_time))
-			return true;
-	return false;
+			return false;
+	return true;
 }
 
 
