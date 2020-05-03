@@ -37,7 +37,9 @@ FOV = 50.0f * PI / 180.0f,
 Z_NEAR = 0.01f,
 Z_FAR = 50.0f,
 SPEED = 5.0f,
-SPEED_ROT = PI / 2.0f;
+SPEED_ROT = PI / 2.0f,
+MIN_VERTICAL_ANGLE = 0.0f,
+MAX_VERTICAL_ANGLE = PI / 2.0f;
 
 constexpr glm::mat4 unitMatrix(1.0f);
 
@@ -173,6 +175,7 @@ void initOpenGLProgram(GLFWwindow *window)
 	shaderProgram = new ShaderProgram("vertex.glsl", "fragment.glsl");
 	Model::loadModels();
 	Texture::loadTextures();
+	Object::loadObjects();
 	P = glm::perspective(FOV, static_cast<float>(INITIAL_WIDTH) / INITIAL_HEIGHT, Z_NEAR, Z_FAR);
 	updateVMatrix(0.0f);
 	M = glm::scale(unitMatrix, glm::vec3(-1.0f, 1.0f, 1.0f));
@@ -189,9 +192,10 @@ void initOpenGLProgram(GLFWwindow *window)
 
 void freeOpenGLProgram(GLFWwindow *window)
 {
-	delete shaderProgram;
-	Model::deleteModels();
+	Object::deleteObjects();
 	Texture::deleteTextures();
+	Model::deleteModels();
+	delete shaderProgram;
 }
 
 
@@ -231,11 +235,11 @@ void updateVMatrix(float time)
 
 	angleHorizontal += speedHorizontal * time;
 	if (angleHorizontal >= PI2) angleHorizontal -= PI2;
-	if (angleHorizontal <= -PI2) angleHorizontal += PI2;
+	else if (angleHorizontal <= -PI2) angleHorizontal += PI2;
 
 	angleVertical += speedVertical * time;
-	if (angleVertical >= PI2) angleVertical -= PI2;
-	if (angleVertical <= -PI2) angleVertical += PI2;
+	if (angleVertical >= MAX_VERTICAL_ANGLE) angleVertical = MAX_VERTICAL_ANGLE;
+	else if (angleVertical <= MIN_VERTICAL_ANGLE) angleVertical = MIN_VERTICAL_ANGLE;
 
 	V = glm::translate(unitMatrix, glm::vec3(0.0f, 0.0f, -distance));
 	V = glm::rotate(V, angleVertical, glm::vec3(1.0f, 0.0f, 0.0f));

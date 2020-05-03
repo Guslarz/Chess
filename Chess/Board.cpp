@@ -17,29 +17,29 @@ Board::Board(const ShaderProgram *shaderProgram, const glm::mat4 &P, const glm::
 	_time(0.0f), _shaderProgram(shaderProgram), _P(P), _V(V), _M(M), _object(Model::board, Texture::board)
 {
 	for (unsigned int i = 0; i < 8; ++i) {
-		addPiece(Model::pawn, Texture::white, i, 1);
-		addPiece(Model::pawn, Texture::black, i, 6);
+		addPiece(Object::piece[WHITE][PAWN], i, 1);
+		addPiece(Object::piece[BLACK][PAWN], i, 6);
 	}
-	addPiece(Model::rook, Texture::white, 0, 0);
-	addPiece(Model::rook, Texture::white, 7, 0);
-	addPiece(Model::rook, Texture::black, 0, 7);
-	addPiece(Model::rook, Texture::black, 7, 7);
+	addPiece(Object::piece[WHITE][ROOK], 0, 0);
+	addPiece(Object::piece[WHITE][ROOK], 7, 0);
+	addPiece(Object::piece[BLACK][ROOK], 0, 7);
+	addPiece(Object::piece[BLACK][ROOK], 7, 7);
 
-	addPiece(Model::knightWhite, Texture::white, 1, 0);
-	addPiece(Model::knightWhite, Texture::white, 6, 0);
-	addPiece(Model::knightBlack, Texture::black, 1, 7);
-	addPiece(Model::knightBlack, Texture::black, 6, 7);
+	addPiece(Object::piece[WHITE][KNIGHT], 1, 0);
+	addPiece(Object::piece[WHITE][KNIGHT], 6, 0);
+	addPiece(Object::piece[BLACK][KNIGHT], 1, 7);
+	addPiece(Object::piece[BLACK][KNIGHT], 6, 7);
 
-	addPiece(Model::bishop, Texture::white, 2, 0);
-	addPiece(Model::bishop, Texture::white, 5, 0);
-	addPiece(Model::bishop, Texture::black, 2, 7);
-	addPiece(Model::bishop, Texture::black, 5, 7);
+	addPiece(Object::piece[WHITE][BISHOP], 2, 0);
+	addPiece(Object::piece[WHITE][BISHOP], 5, 0);
+	addPiece(Object::piece[BLACK][BISHOP], 2, 7);
+	addPiece(Object::piece[BLACK][BISHOP], 5, 7);
 
-	addPiece(Model::queen, Texture::white, 3, 0);
-	addPiece(Model::queen, Texture::black, 3, 7);
+	addPiece(Object::piece[WHITE][QUEEN], 3, 0);
+	addPiece(Object::piece[BLACK][QUEEN], 3, 7);
 
-	addPiece(Model::king, Texture::white, 4, 0);
-	addPiece(Model::king, Texture::black, 4, 7);
+	addPiece(Object::piece[WHITE][KING], 4, 0);
+	addPiece(Object::piece[BLACK][KING], 4, 7);
 }
 
 
@@ -112,9 +112,9 @@ bool Board::finished() const
 }
 
 
-void Board::addPiece(const Model *model, GLuint texture, unsigned int x, unsigned int y)
+void Board::addPiece(const Object *object, unsigned int x, unsigned int y)
 {
-	Piece *piece = new Piece(model, texture, glm::vec3(x, 0.0f, y));
+	Piece *piece = new Piece(object, glm::vec3(x, 0.0f, y));
 	_board[Position(x, y)] = piece;
 	_pieces.push_back(piece);
 }

@@ -1,6 +1,7 @@
 # TODO
 - dopracowanie animacji, animacja PromotionMove
-- ? przyciski (następny, poprzedni ruch)
+- ? przyciski (następny, poprzedni ruch albo odtwarzaj/pauza)
 - coś w tle
 - sensowny shader
-- modele odpowiadające figurom, obrót
+- lepsze tekstury
+- wektory normalne dla wierzchołków

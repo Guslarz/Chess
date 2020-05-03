@@ -8,11 +8,11 @@
 
 class Piece
 {
-	Object _object;
+	const Object *_object;
 	glm::vec3 _position;
 
 public:
-	Piece(const Model*, GLuint, const glm::vec3&);
+	Piece(const Object *object, const glm::vec3&);
 
 	void render(const ShaderProgram*, const glm::mat4&) const;
 

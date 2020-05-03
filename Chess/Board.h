@@ -36,7 +36,7 @@ public:
 	bool finished() const;
 
 private:
-	void addPiece(const Model*, GLuint, unsigned int, unsigned int);
+	void addPiece(const Object*, unsigned int, unsigned int);
 	void capturePieceAt(const Position&);
 	void movePiece(const Position&, const Position&);
 	void makeCastlingMove(const Position&, const Position&, const Position&, const Position&);
