@@ -13,3 +13,4 @@
 - Z, X - przybliż, oddal
 - Spacja - pauza/odtwarzaj
 - Strzałka w lewo/prawo - poprzedni/następny ruch
+- ESC - nowy plik

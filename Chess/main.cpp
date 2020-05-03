@@ -27,7 +27,7 @@ void freeOpenGLProgram(GLFWwindow*);
 void drawScene(GLFWwindow*);
 void updateVMatrix(float);
 void renderSurroundings();
-void askForFile();
+void askForFile(GLFWwindow*);
 
 
 constexpr int
@@ -69,15 +69,13 @@ int main()
 		return -1;
 	initOpenGLProgram(window);
 
-	//data = new GameData("test.pgn");
-	//board = new Board();
 	glfwSetTime(0.0);
 	while (!glfwWindowShouldClose(window)) {
 		if (data) {
 			drawScene(window);
 		}
 		else {
-			askForFile();
+			askForFile(window);
 		}
 	}
 
@@ -141,6 +139,12 @@ void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods
 				board->applyMove(move);
 				board->finishAnimations();
 			}
+			break;
+		case GLFW_KEY_ESCAPE:
+			delete board;
+			delete data;
+			board = nullptr;
+			data = nullptr;
 			break;
 		}
 		break;
@@ -308,8 +312,10 @@ void renderSurroundings()
 }
 
 
-void askForFile()
+void askForFile(GLFWwindow *window)
 {
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glfwSwapBuffers(window);
 	std::cout << "Plik PGN: ";
 	std::string filename;
 	std::cin >> filename;
