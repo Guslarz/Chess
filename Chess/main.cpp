@@ -6,6 +6,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <iostream>
 
 #include <cstdio>
 #include <cmath>
@@ -26,6 +27,7 @@ void freeOpenGLProgram(GLFWwindow*);
 void drawScene(GLFWwindow*);
 void updateVMatrix(float);
 void renderSurroundings();
+void askForFile();
 
 
 constexpr int
@@ -67,15 +69,20 @@ int main()
 		return -1;
 	initOpenGLProgram(window);
 
-	data = new GameData("test.pgn");
-	board = new Board();
+	//data = new GameData("test.pgn");
+	//board = new Board();
 	glfwSetTime(0.0);
 	while (!glfwWindowShouldClose(window)) {
-		drawScene(window);
+		if (data) {
+			drawScene(window);
+		}
+		else {
+			askForFile();
+		}
 	}
 
-	delete data;
-	delete board;
+	if (data) delete data;
+	if (board) delete board;
 	freeOpenGLProgram(window);
 	glfwDestroyWindow(window);
 	glfwTerminate();
@@ -278,4 +285,16 @@ void renderSurroundings()
 	scale.y = 25.0f;
 	glUniformMatrix4fv(simpleShader->getUniform("M"), 1, GL_FALSE, glm::value_ptr(glm::scale(M, scale)));
 	walls.render(simpleShader);
+}
+
+
+void askForFile()
+{
+	std::cout << "Plik PGN: ";
+	std::string filename;
+	std::cin >> filename;
+	if (data) delete data;
+	if (board) delete board;
+	data = new GameData(filename);
+	board = new Board;
 }
