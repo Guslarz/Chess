@@ -15,7 +15,7 @@ void Object::render(const ShaderProgram *shaderProgram) const
 {
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, _texture);
-	glUniform1i(shaderProgram->getUniform("tex"), 0);
+	glUniform1i(shaderProgram->getUniform("texSampler0"), 0);
 	_model->render();
 }
 

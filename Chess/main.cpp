@@ -10,6 +10,9 @@
 
 #include <cstdio>
 #include <cmath>
+#include <string>
+#include <codecvt>
+#include <locale>
 
 #include "ShaderProgram.h"
 #include "GameData.h"
@@ -21,12 +24,15 @@
 void errorCallback(int, const char*);
 void keyCallback(GLFWwindow*, int, int, int, int);
 void windowSizeCallback(GLFWwindow*, int, int);
+void dropCallback(GLFWwindow*, int, const char*[]);
 GLFWwindow* initGLFWwindow();
 void initOpenGLProgram(GLFWwindow*);
 void freeOpenGLProgram(GLFWwindow*);
 void drawScene(GLFWwindow*);
 void updateVMatrix(float);
 void askForFile(GLFWwindow*);
+void loadFile(const std::string&);
+std::string utf8ToString(const std::string&, const std::locale& = std::locale(""));
 
 
 constexpr int
@@ -165,6 +171,12 @@ void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods
 }
 
 
+void dropCallback(GLFWwindow *window, int count, const char *paths[])
+{
+	loadFile(utf8ToString(std::string(paths[0])));
+}
+
+
 void windowSizeCallback(GLFWwindow *window, int width, int height)
 {
 	if (height == 0) return;
@@ -220,6 +232,7 @@ void initOpenGLProgram(GLFWwindow *window)
 
 	glfwSetKeyCallback(window, keyCallback);
 	glfwSetWindowSizeCallback(window, windowSizeCallback);
+	glfwSetDropCallback(window, dropCallback);
 }
 
 
@@ -289,13 +302,51 @@ void updateVMatrix(float time)
 
 void askForFile(GLFWwindow *window)
 {
+	static float vertices[] = {
+		-1.0f, -1.0f,	1.0f, 1.0f,		-1.0f, 1.0f,
+		-1.0f, -1.0f,	1.0f, 1.0f,		1.0f, -1.0f
+	}, uvs[] = {
+		0.0f, 1.0f,		1.0f, 0.0f,		0.0f, 0.0f,
+		0.0f, 1.0f,		1.0f, 0.0f,		1.0f, 1.0f
+	};
+	static GLsizei count = 6;
+
+	ShaderProgram::uiShader->use();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, Texture::draganddrop);
+	glUniform1i(ShaderProgram::uiShader->getUniform("texSampler0"), 0);
+
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, vertices);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, uvs);
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+	glDisableVertexAttribArray(0);
+	glDisableVertexAttribArray(1);
+
 	glfwSwapBuffers(window);
-	std::cout << "Plik PGN: ";
-	std::string filename;
-	std::cin >> filename;
+	glfwPollEvents();
+}
+
+
+void loadFile(const std::string &filename)
+{
 	if (data) delete data;
-	if (board) delete board;
-	data = new GameData(filename);
+	if (board) delete board; 
+	std::ifstream file(filename);
+	data = new GameData(file);
 	board = new Board;
+	file.close();
+}
+
+
+std::string utf8ToString(const std::string& str, const std::locale &loc)
+{
+	std::wstring_convert<std::codecvt_utf8<wchar_t>> wconv;
+	std::wstring wstr = wconv.from_bytes(str);
+	std::vector<char> buf(wstr.size());
+	std::use_facet<std::ctype<wchar_t>>(loc).narrow(wstr.data(), wstr.data() + wstr.size(), '?', buf.data());
+	return std::string(buf.data(), buf.size());
 }

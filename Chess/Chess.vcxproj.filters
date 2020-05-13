@@ -44,8 +44,11 @@
     <Filter Include="shaders">
       <UniqueIdentifier>{59c4f0f3-2b2d-4b86-8f9e-5c7b93ce8a69}</UniqueIdentifier>
     </Filter>
-    <Filter Include="shaders\object">
+    <Filter Include="shaders\phong">
       <UniqueIdentifier>{46c1e22c-876e-4c63-b506-97935d18d601}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="shaders\ui">
+      <UniqueIdentifier>{ca4c31c3-1e75-4d1b-a608-ef69ac987c81}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -129,11 +132,17 @@
     <None Include="test.pgn">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="objectVertex.glsl">
-      <Filter>shaders\object</Filter>
+    <None Include="phongFragment.glsl">
+      <Filter>shaders\phong</Filter>
     </None>
-    <None Include="objectFragment.glsl">
-      <Filter>shaders\object</Filter>
+    <None Include="phongVertex.glsl">
+      <Filter>shaders\phong</Filter>
+    </None>
+    <None Include="uiFragment.glsl">
+      <Filter>shaders\ui</Filter>
+    </None>
+    <None Include="uiVertex.glsl">
+      <Filter>shaders\ui</Filter>
     </None>
   </ItemGroup>
 </Project>

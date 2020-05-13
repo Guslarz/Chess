@@ -158,9 +158,11 @@
     <ClInclude Include="Texture.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="objectFragment.glsl" />
+    <None Include="phongFragment.glsl" />
     <None Include="test.pgn" />
-    <None Include="objectVertex.glsl" />
+    <None Include="phongVertex.glsl" />
+    <None Include="uiFragment.glsl" />
+    <None Include="uiVertex.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -3,7 +3,7 @@
 #include <cstdio>
 
 
-const ShaderProgram *ShaderProgram::objectShader;
+const ShaderProgram *ShaderProgram::objectShader, *ShaderProgram::uiShader;
 
 
 ShaderProgram::ShaderProgram(const char *vertexFilename, const char *fragmentFilename, const char *geometryFilename)
@@ -64,13 +64,15 @@ ShaderProgram::~ShaderProgram()
 
 void ShaderProgram::loadShaders()
 {
-	objectShader = new ShaderProgram("objectVertex.glsl", "objectFragment.glsl");
+	objectShader = new ShaderProgram("phongVertex.glsl", "phongFragment.glsl");
+	uiShader = new ShaderProgram("uiVertex.glsl", "uiFragment.glsl");
 }
 
 
 void ShaderProgram::deleteShaders()
 {
 	delete objectShader;
+	delete uiShader;
 }
 
 

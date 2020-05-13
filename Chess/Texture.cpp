@@ -5,7 +5,7 @@
 #include "lodepng.h"
 
 
-GLuint Texture::cube, Texture::board, Texture::white, Texture::black, Texture::floor, Texture::fog;
+GLuint Texture::cube, Texture::board, Texture::white, Texture::black, Texture::floor, Texture::fog, Texture::draganddrop;
 
 
 GLuint Texture::fromPNGFile(const char *filename)
@@ -35,6 +35,7 @@ void Texture::loadTextures()
 	black = fromPNGFile("textures/black.png");
 	floor = fromPNGFile("textures/floor.png");
 	fog = fromPNGFile("textures/fog.png");
+	draganddrop = fromPNGFile("textures/draganddrop.png");
 }
 
 
@@ -46,4 +47,5 @@ void Texture::deleteTextures()
 	glDeleteTextures(1, &black);
 	glDeleteTextures(1, &floor);
 	glDeleteTextures(1, &fog);
+	glDeleteTextures(1, &draganddrop);
 }
