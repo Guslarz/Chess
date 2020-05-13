@@ -3,6 +3,9 @@
 #include <cstdio>
 
 
+const ShaderProgram *ShaderProgram::objectShader;
+
+
 ShaderProgram::ShaderProgram(const char *vertexFilename, const char *fragmentFilename, const char *geometryFilename)
 {
 	program = glCreateProgram();
@@ -56,6 +59,18 @@ ShaderProgram::~ShaderProgram()
 	}
 
 	glDeleteProgram(program);
+}
+
+
+void ShaderProgram::loadShaders()
+{
+	objectShader = new ShaderProgram("objectVertex.glsl", "objectFragment.glsl");
+}
+
+
+void ShaderProgram::deleteShaders()
+{
+	delete objectShader;
 }
 
 

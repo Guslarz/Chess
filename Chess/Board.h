@@ -6,7 +6,6 @@
 #include <array>
 
 #include "Move.h"
-#include "ShaderProgram.h"
 #include "Animation.h"
 
 
@@ -24,7 +23,7 @@ public:
 	Board();
 	~Board();
 
-	void render(const ShaderProgram*, const glm::mat4&) const;
+	void render(const glm::mat4&) const;
 	void applyAnimations();
 	void applyMove(const Move*);
 	void undoMove(const Move*);

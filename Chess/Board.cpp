@@ -4,6 +4,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "Texture.h"
+#include "ShaderProgram.h"
 
 
 constexpr float
@@ -52,17 +53,17 @@ Board::~Board()
 }
 
 
-void Board::render(const ShaderProgram *shaderProgram, const glm::mat4 &M) const
+void Board::render(const glm::mat4 &M) const
 {
 	glm::mat4 boardM = glm::scale(M, glm::vec3(4.0f, 1.0f, 4.0f));
-	glUniformMatrix4fv(shaderProgram->getUniform("M"), 1, GL_FALSE, glm::value_ptr(boardM));
-	glUniform1f(shaderProgram->getUniform("alpha"), 1.0f);
-	_boardObject.render(shaderProgram);
-	_boardBorderObject.render(shaderProgram);
+	glUniformMatrix4fv(ShaderProgram::objectShader->getUniform("M"), 1, GL_FALSE, glm::value_ptr(boardM));
+	glUniform1f(ShaderProgram::objectShader->getUniform("alpha"), 1.0f);
+	_boardObject.render(ShaderProgram::objectShader);
+	_boardBorderObject.render(ShaderProgram::objectShader);
 
 	glm::mat4 pieceM = glm::translate(M, glm::vec3(-3.5f, 1.0f, -3.5f));
 	for (auto piece : _pieces)
-		piece->render(shaderProgram, pieceM);
+		piece->render(ShaderProgram::objectShader, pieceM);
 }
 
 
@@ -118,8 +119,12 @@ void Board::undoMove(const Move *move)
 		piece->setPosition(normalMove->from());
 	}
 	if (auto *captureMove = dynamic_cast<const CaptureMove*>(move)) {
-		_pieces.push_back(_captured.back());
+		Piece *piece = _captured.back();
+		_board[captureMove->target()] = piece;
+		_pieces.push_back(piece);
 		_captured.pop_back();
+		piece->setPosition(captureMove->target());
+		piece->setOpacity(1.0f);
 	}
 }
 

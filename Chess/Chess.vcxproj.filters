@@ -41,6 +41,12 @@
     <Filter Include="Object\Model">
       <UniqueIdentifier>{ece1e945-2468-4c1e-b878-74ddce4897d7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="shaders">
+      <UniqueIdentifier>{59c4f0f3-2b2d-4b86-8f9e-5c7b93ce8a69}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="shaders\object">
+      <UniqueIdentifier>{46c1e22c-876e-4c63-b506-97935d18d601}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -123,17 +129,11 @@
     <None Include="test.pgn">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="fragment.glsl">
-      <Filter>Resource Files</Filter>
+    <None Include="objectVertex.glsl">
+      <Filter>shaders\object</Filter>
     </None>
-    <None Include="vertex.glsl">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="fragmentSimple.glsl">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="vertexSimple.glsl">
-      <Filter>Resource Files</Filter>
+    <None Include="objectFragment.glsl">
+      <Filter>shaders\object</Filter>
     </None>
   </ItemGroup>
 </Project>

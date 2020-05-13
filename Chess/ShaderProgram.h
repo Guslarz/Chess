@@ -15,6 +15,11 @@ public:
 	GLuint getUniform(const char *name) const { return glGetUniformLocation(program, name); }
 	GLuint getAttrib(const char *name) const { return glGetAttribLocation(program, name); }
 
+	static const ShaderProgram *objectShader;
+
+	static void loadShaders();
+	static void deleteShaders();
+
 private:
 	static const char* readFile(const char*);
 	static GLuint loadShader(GLenum, const char*);
