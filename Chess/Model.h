@@ -19,8 +19,8 @@ public:
 	static void loadModels();
 	static void deleteModels();
 
-	static const Model *cube, *board, *boardBorder, *pawn, *bishop, *knightWhite, *knightBlack, *rook, *king, *queen, *floor, *cylinder;
+	static const Model *board, *boardBorder, *pawn, *bishop, *knightWhite, *knightBlack, *rook, *king, *queen;
 
 private:
-	static Model* fromOBJFile(const std::string&, float = 1.0f);
+	static Model* fromOBJFile(const std::string&);
 };

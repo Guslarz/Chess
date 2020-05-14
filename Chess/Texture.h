@@ -10,6 +10,6 @@ public:
 	static void loadTextures();
 	static void deleteTextures();
 
-	static GLuint cube, board, white, black, floor, fog, draganddrop;
+	static GLuint board, white, black, draganddrop;
 };
 

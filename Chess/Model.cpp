@@ -5,9 +5,8 @@
 #include <glm/glm.hpp>
 
 
-const Model *Model::cube, *Model::board, *Model::boardBorder, *Model::pawn, *Model::bishop,
-*Model::knightWhite, *Model::knightBlack, *Model::rook, *Model::king, *Model::queen, *Model::floor,
-*Model::cylinder;
+const Model *Model::board, *Model::boardBorder, *Model::pawn, *Model::bishop,
+*Model::knightWhite, *Model::knightBlack, *Model::rook, *Model::king, *Model::queen;
 
 
 
@@ -33,7 +32,6 @@ void Model::render() const
 
 void Model::loadModels()
 {
-	cube = fromOBJFile("models/cube.obj");
 	board = fromOBJFile("models/board.obj");
 	boardBorder = fromOBJFile("models/boardborder.obj");
 	pawn = fromOBJFile("models/pawn.obj");
@@ -43,8 +41,6 @@ void Model::loadModels()
 	rook = fromOBJFile("models/rook.obj");
 	king = fromOBJFile("models/king.obj");
 	queen = fromOBJFile("models/queen.obj");
-	floor = fromOBJFile("models/floor.obj", 2.0f);
-	cylinder = fromOBJFile("models/cylinder.obj", 2.0f);
 }
 
 
@@ -60,12 +56,10 @@ void Model::deleteModels()
 	delete rook;
 	delete king;
 	delete queen;
-	delete floor;
-	delete cylinder;
 }
 
 
-Model* Model::fromOBJFile(const std::string &filename, float textureScale)
+Model* Model::fromOBJFile(const std::string &filename)
 {
 	std::vector<glm::vec4> tmpVertices;
 	std::vector<glm::vec4> tmpNormals;
@@ -84,7 +78,7 @@ Model* Model::fromOBJFile(const std::string &filename, float textureScale)
 		}
 		else if (head == "vt") {
 			file >> x >> y;
-			tmpUvs.push_back(glm::vec2(x, y) * textureScale);
+			tmpUvs.push_back(glm::vec2(x, y));
 		}
 		else if (head == "vn") {
 			file >> x >> y >> z;
