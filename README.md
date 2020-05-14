@@ -2,7 +2,7 @@
 - coś w tle
 - sensowny shader
 - lepsze tekstury
-- odbicia w planszy
+- odbicia w planszy albo cienie
 - informacje (kto na kogo, event, wynik czy coś)
 
 # Sterowanie
