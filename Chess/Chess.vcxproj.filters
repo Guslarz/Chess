@@ -50,6 +50,9 @@
     <Filter Include="shaders\ui">
       <UniqueIdentifier>{ca4c31c3-1e75-4d1b-a608-ef69ac987c81}</UniqueIdentifier>
     </Filter>
+    <Filter Include="shaders\depth">
+      <UniqueIdentifier>{0266090e-9c14-4913-822f-904dfcc3bdbb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -143,6 +146,12 @@
     </None>
     <None Include="uiVertex.glsl">
       <Filter>shaders\ui</Filter>
+    </None>
+    <None Include="depthFragment.glsl">
+      <Filter>shaders\depth</Filter>
+    </None>
+    <None Include="depthVertex.glsl">
+      <Filter>shaders\depth</Filter>
     </None>
   </ItemGroup>
 </Project>

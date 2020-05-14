@@ -10,9 +10,16 @@ Piece::Piece(const Object *object, const glm::vec3 &position, float opacity) :
 {}
 
 
-void Piece::render(const ShaderProgram *shaderProgram, const glm::mat4 &M) const
+void Piece::render(const glm::mat4 &M) const
 {
-	glUniformMatrix4fv(shaderProgram->getUniform("M"), 1, GL_FALSE, glm::value_ptr(glm::translate(M, _position)));
-	glUniform1f(shaderProgram->getUniform("alpha"), _opacity);
-	_object->render(shaderProgram);
+	glUniformMatrix4fv(ShaderProgram::objectShader->getUniform("M"), 1, GL_FALSE, glm::value_ptr(glm::translate(M, _position)));
+	glUniform1f(ShaderProgram::objectShader->getUniform("alpha"), _opacity);
+	_object->render();
+}
+
+
+void Piece::renderShadow(const glm::mat4 &M) const
+{
+	glUniformMatrix4fv(ShaderProgram::depthShader->getUniform("M"), 1, GL_FALSE, glm::value_ptr(glm::translate(M, _position)));
+	_object->renderShadow();
 }

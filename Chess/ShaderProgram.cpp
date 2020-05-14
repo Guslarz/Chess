@@ -3,23 +3,23 @@
 #include <cstdio>
 
 
-const ShaderProgram *ShaderProgram::objectShader, *ShaderProgram::uiShader;
+const ShaderProgram *ShaderProgram::objectShader, *ShaderProgram::uiShader, *ShaderProgram::depthShader;
 
 
 ShaderProgram::ShaderProgram(const char *vertexFilename, const char *fragmentFilename, const char *geometryFilename)
 {
 	program = glCreateProgram();
 
-	printf("Loading vertex shader...\n");
+	printf("Loading vertex shader from %s\n", vertexFilename);
 	vertex = loadShader(GL_VERTEX_SHADER, vertexFilename);
 	glAttachShader(program, vertex);
 
-	printf("Loading fragment shader...\n");
+	printf("Loading fragment shader from %s\n", fragmentFilename);
 	fragment = loadShader(GL_FRAGMENT_SHADER, fragmentFilename);
 	glAttachShader(program, fragment);
 
 	if (geometryFilename != nullptr) {
-		printf("Loading geometry shader...\n");
+		printf("Loading geometry shader from %s\n", geometryFilename);
 		geometry = loadShader(GL_GEOMETRY_SHADER, geometryFilename);
 		glAttachShader(program, geometry);
 	}
@@ -66,6 +66,7 @@ void ShaderProgram::loadShaders()
 {
 	objectShader = new ShaderProgram("phongVertex.glsl", "phongFragment.glsl");
 	uiShader = new ShaderProgram("uiVertex.glsl", "uiFragment.glsl");
+	depthShader = new ShaderProgram("depthVertex.glsl", "depthFragment.glsl");
 }
 
 
@@ -73,6 +74,7 @@ void ShaderProgram::deleteShaders()
 {
 	delete objectShader;
 	delete uiShader;
+	delete depthShader;
 }
 
 

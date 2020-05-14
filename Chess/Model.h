@@ -15,6 +15,7 @@ class Model
 public:
 	Model(const std::vector<float>&, const std::vector<float>&, const std::vector<float>&);
 	void render() const;
+	void renderShadow() const;
 
 	static void loadModels();
 	static void deleteModels();

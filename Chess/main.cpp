@@ -54,7 +54,8 @@ MAX_VERTICAL_ANGLE = PI / 2.0f;
 
 constexpr glm::mat4 unitMatrix(1.0f);
 
-glm::mat4 P, V, M;
+glm::mat4 P, V, M, depthP, depthV;
+glm::vec4 light0(10.0f, 10.0f, 10.0f, 1.0f), light1(-10.0f, 10.0f, -1.0f, 1.0f);
 GameData *data;
 Board *board;
 bool paused = true;
@@ -63,6 +64,10 @@ float
 speed = 0.0f,
 speedVertical = 0.0f,
 speedHorizontal = 0.0f;
+
+int
+currentWidth = INITIAL_WIDTH,
+currentHeight = INITIAL_HEIGHT;
 
 
 int main()
@@ -179,6 +184,8 @@ void dropCallback(GLFWwindow *window, int count, const char *paths[])
 
 void windowSizeCallback(GLFWwindow *window, int width, int height)
 {
+	currentWidth = width;
+	currentHeight = height;
 	if (height == 0) return;
 	P = glm::perspective(FOV, static_cast<float>(width) / height, Z_NEAR, Z_FAR);
 	glViewport(0, 0, width, height);
@@ -223,6 +230,7 @@ void initOpenGLProgram(GLFWwindow *window)
 	P = glm::perspective(FOV, static_cast<float>(INITIAL_WIDTH) / INITIAL_HEIGHT, Z_NEAR, Z_FAR);
 	updateVMatrix(0.0f);
 	M = glm::scale(unitMatrix, glm::vec3(-1.0f, 1.0f, 1.0f));
+	depthP = glm::ortho(-30.0f, 30.0f, -30.0f, 30.0f, -30.0f, 30.0f);
 
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 	glEnable(GL_DEPTH_TEST);
@@ -247,15 +255,9 @@ void freeOpenGLProgram(GLFWwindow *window)
 
 void drawScene(GLFWwindow *window)
 {
-	ShaderProgram::objectShader->use();
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
 	float time = static_cast<float>(glfwGetTime());
 	glfwSetTime(0.0);
 	updateVMatrix(time);
-
-	glUniformMatrix4fv(ShaderProgram::objectShader->getUniform("P"), 1, GL_FALSE, glm::value_ptr(P));
-	glUniformMatrix4fv(ShaderProgram::objectShader->getUniform("V"), 1, GL_FALSE, glm::value_ptr(V));
 
 	if (!paused) {
 		board->addTime(time);
@@ -269,6 +271,32 @@ void drawScene(GLFWwindow *window)
 		}
 		board->applyAnimations();
 	}
+
+	glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+	glBindFramebuffer(GL_FRAMEBUFFER, Texture::depthFBO);
+	ShaderProgram::depthShader->use();
+	glClear(GL_DEPTH_BUFFER_BIT);
+	glCullFace(GL_FRONT);
+
+	glUniformMatrix4fv(ShaderProgram::depthShader->getUniform("depthP"), 1, GL_FALSE, glm::value_ptr(depthP));
+	depthV = glm::lookAt(glm::vec3(light0), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	glUniformMatrix4fv(ShaderProgram::depthShader->getUniform("depthV"), 1, GL_FALSE, glm::value_ptr(depthV));
+	board->renderShadow(M);
+
+	glViewport(0, 0, currentWidth, currentHeight);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	ShaderProgram::objectShader->use();
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glCullFace(GL_BACK);
+
+	glUniform4fv(ShaderProgram::objectShader->getUniform("light"), 1, glm::value_ptr(light0));
+	glUniformMatrix4fv(ShaderProgram::objectShader->getUniform("P"), 1, GL_FALSE, glm::value_ptr(P));
+	glUniformMatrix4fv(ShaderProgram::objectShader->getUniform("V"), 1, GL_FALSE, glm::value_ptr(V));
+	glUniformMatrix4fv(ShaderProgram::objectShader->getUniform("depthP"), 1, GL_FALSE, glm::value_ptr(depthP));
+	glUniformMatrix4fv(ShaderProgram::objectShader->getUniform("depthV"), 1, GL_FALSE, glm::value_ptr(depthV));
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, Texture::depth);
+	glUniform1i(ShaderProgram::objectShader->getUniform("shadowMap"), 1);
 	board->render(M);
 
 	glfwSwapBuffers(window);

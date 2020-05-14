@@ -15,7 +15,8 @@ class Object
 public:
 	Object(const Model*, GLuint);
 
-	void render(const ShaderProgram*) const;
+	void render() const;
+	void renderShadow() const;
 
 	static void loadObjects();
 	static void deleteObjects();

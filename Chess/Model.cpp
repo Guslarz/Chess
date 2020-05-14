@@ -30,6 +30,15 @@ void Model::render() const
 }
 
 
+void Model::renderShadow() const
+{
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, _vertices.data());
+	glDrawArrays(GL_TRIANGLES, 0, _count);
+	glDisableVertexAttribArray(0);
+}
+
+
 void Model::loadModels()
 {
 	board = fromOBJFile("models/board.obj");

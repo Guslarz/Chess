@@ -159,6 +159,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="phongFragment.glsl" />
+    <None Include="depthFragment.glsl" />
+    <None Include="depthVertex.glsl" />
     <None Include="test.pgn" />
     <None Include="phongVertex.glsl" />
     <None Include="uiFragment.glsl" />

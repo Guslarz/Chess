@@ -11,12 +11,18 @@ Object::Object(const Model *model, GLuint texture) :
 {}
 
 
-void Object::render(const ShaderProgram *shaderProgram) const
+void Object::render() const
 {
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, _texture);
-	glUniform1i(shaderProgram->getUniform("texSampler0"), 0);
+	glUniform1i(ShaderProgram::objectShader->getUniform("texSampler0"), 0);
 	_model->render();
+}
+
+
+void Object::renderShadow() const
+{
+	_model->renderShadow();
 }
 
 
