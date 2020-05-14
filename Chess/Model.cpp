@@ -73,13 +73,14 @@ Model* Model::fromOBJFile(const std::string &filename, float textureScale)
 	std::vector<unsigned int> vertexIndices, normalIndices, uvIndices;
 	std::ifstream file(filename);
 	std::string head, line;
-	float x, y, z;
+	float x, y, z, minY = 0;
 	unsigned int vertexIndex[3], uvIndex[3], normalIndex[3];
 
 	while (file >> head) {
 		if (head == "v") {
 			file >> x >> y >> z;
 			tmpVertices.push_back(glm::vec4(x, y, z, 1.0f));
+
 		}
 		else if (head == "vt") {
 			file >> x >> y;
