@@ -46,7 +46,6 @@ void Model::loadModels()
 
 void Model::deleteModels()
 {
-	delete cube;
 	delete board;
 	delete boardBorder;
 	delete pawn;

@@ -2,10 +2,8 @@
 - coś w tle
 - sensowny shader
 - lepsze tekstury
-- wektory normalne dla wierzchołków
-- dopracować modele (dół = -1.0)
-- wczytywanie pliku (argument, gui ???)
 - odbicia w planszy
+- informacje (kto na kogo, event, wynik czy coś)
 
 # Sterowanie
 - W, S, A, D - obrót kamery
