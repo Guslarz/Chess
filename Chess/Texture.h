@@ -1,20 +1,26 @@
 #pragma once
 
 #include <GL/glew.h>
+#include <array>
 
 
 constexpr int
-SHADOW_WIDTH = 1024,
-SHADOW_HEIGHT = 1024;
+SHADOW_WIDTH = 2048,
+SHADOW_HEIGHT = 2048,
+LIGHT_COUNT = 2;
 
 
 class Texture
 {
 public:
-	static GLuint fromPNGFile(const char*);
 	static void loadTextures();
 	static void deleteTextures();
 
-	static GLuint board, white, black, draganddrop, depth, depthFBO;
+	static GLuint board, white, black, draganddrop;
+	static std::array<GLuint, LIGHT_COUNT> shadowMap, shadowMapFBO;
+
+private:
+	static GLuint fromPNGFile(const char*);
+	static GLuint forRendering(GLuint&);
 };
 

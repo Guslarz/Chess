@@ -1,19 +1,18 @@
 #version 330 core
 
-uniform mat4 P, V, M, depthP, depthV;
-uniform vec4 light;
+uniform mat4 P, V, M, depthP, depthV[2];
+uniform vec4 light[2];
 
 layout(location = 0) in vec4 vertex;
 layout(location = 1) in vec4 normal;
 layout(location = 2) in vec2 UV;
 
 out vec2 iTexCoord0;
-out vec4 l, n, v, shadowCoord;
+out vec4 l[2], n, v, shadowCoord[2];
 
 void main()
 {
 	vec4 tmp = V * M * vertex;
-	l = normalize(V * light - tmp);
 	v = normalize(-tmp);
 	n = normalize(V * M * normal);
 
@@ -21,6 +20,9 @@ void main()
 	iTexCoord0 = UV;
 
 	mat4 biasMatrix = mat4(0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.5f, 0.0f, 0.5f, 0.5f, 0.5f, 1.0f);
-	shadowCoord = biasMatrix * depthP * depthV * M * vertex;
-
+	
+	for (int i = 0; i < 2; ++i) {
+		l[i] = normalize(V * light[i] - tmp);
+		shadowCoord[i] = biasMatrix * depthP * depthV[i] * M * vertex;
+	}
 }
