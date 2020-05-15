@@ -1,11 +1,13 @@
 #version 330 core
 
+#define LIGHT_COUNT 2
+
 in vec2 iTexCoord0;
-in vec4 l[2], v, n, shadowCoord[2];
+in vec4 l[LIGHT_COUNT], v, n, shadowCoord[LIGHT_COUNT];
 
 out vec4 pixelColor;
 
-uniform sampler2D texSampler0, texSampler1, shadowMap[2];
+uniform sampler2D texSampler0, texSampler1, shadowMap[LIGHT_COUNT];
 uniform float alpha = 1.0f;
 
 
@@ -13,7 +15,7 @@ void main()
 {
 	vec4 vnorm = normalize(v),
 		nnorm = normalize(n);
-	vec4 lnorm[2], rnorm[2];
+	vec4 lnorm[LIGHT_COUNT], rnorm[LIGHT_COUNT];
 	vec4 texColor0 = texture(texSampler0, iTexCoord0),
 		texColor1 = texture(texSampler1, iTexCoord0);
 	
@@ -23,7 +25,8 @@ void main()
 		
 	vec2 texelSize = 1.0 / textureSize(shadowMap[0], 0);
 
-	for (int i = 0; i < 2; ++i) {
+	pixelColor = vec4(0.0f, 0.0f, 0.0f, 0.0f);
+	for (int i = 0; i < LIGHT_COUNT; ++i) {
 		vec4 lnorm = normalize(l[i]);
 		vec4 rnorm = reflect(-lnorm, nnorm);
 		
@@ -41,8 +44,8 @@ void main()
 		if (visibility < 0.0f) 
 			visibility = 0.0f;
 
-		tmp[i] = vec4(kd.rgb * nl * visibility, kd.a * alpha) + vec4(ks.rgb * rv, 0);
+		pixelColor += vec4(kd.rgb * nl * visibility, kd.a * alpha) + vec4(ks.rgb * rv, 0);
 	}
 
-	pixelColor = (tmp[0] + tmp[1]) / 2.0f;
+	pixelColor /= float(LIGHT_COUNT);
 }

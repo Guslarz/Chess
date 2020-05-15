@@ -1,14 +1,16 @@
 #version 330 core
 
-uniform mat4 P, V, M, depthP, depthV[2];
-uniform vec4 light[2];
+#define LIGHT_COUNT 2
+
+uniform mat4 P, V, M, depthP, depthV[LIGHT_COUNT];
+uniform vec4 light[LIGHT_COUNT];
 
 layout(location = 0) in vec4 vertex;
 layout(location = 1) in vec4 normal;
 layout(location = 2) in vec2 UV;
 
 out vec2 iTexCoord0;
-out vec4 l[2], n, v, shadowCoord[2];
+out vec4 l[LIGHT_COUNT], n, v, shadowCoord[LIGHT_COUNT];
 
 void main()
 {
@@ -21,7 +23,7 @@ void main()
 
 	mat4 biasMatrix = mat4(0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.5f, 0.0f, 0.5f, 0.5f, 0.5f, 1.0f);
 	
-	for (int i = 0; i < 2; ++i) {
+	for (int i = 0; i < LIGHT_COUNT; ++i) {
 		l[i] = normalize(V * light[i] - tmp);
 		shadowCoord[i] = biasMatrix * depthP * depthV[i] * M * vertex;
 	}
