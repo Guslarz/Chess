@@ -25,6 +25,7 @@ public:
 
 	void render(const glm::mat4&) const;
 	void renderShadow(const glm::mat4&) const;
+	void renderPieces(const glm::mat4&) const;
 	void applyAnimations();
 	void applyMove(const Move*);
 	void undoMove(const Move*);

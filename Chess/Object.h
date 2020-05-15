@@ -10,10 +10,10 @@
 class Object
 {
 	const Model *_model;
-	const GLuint _texture;
+	const GLuint _diffuse, _specular;
 
 public:
-	Object(const Model*, GLuint);
+	Object(const Model*, GLuint, GLuint);
 
 	void render() const;
 	void renderShadow() const;

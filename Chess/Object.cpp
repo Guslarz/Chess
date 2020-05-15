@@ -6,16 +6,19 @@
 std::array<std::array<Object*, 6>, 2> Object::piece;
 
 
-Object::Object(const Model *model, GLuint texture) :
-	_model(model), _texture(texture)
+Object::Object(const Model *model, GLuint diffuse, GLuint specular) :
+	_model(model), _diffuse(diffuse), _specular(specular)
 {}
 
 
 void Object::render() const
 {
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, _texture);
+	glBindTexture(GL_TEXTURE_2D, _diffuse);
 	glUniform1i(ShaderProgram::objectShader->getUniform("texSampler0"), 0);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, _diffuse);
+	glUniform1i(ShaderProgram::objectShader->getUniform("texSampler1"), 1);
 	_model->render();
 }
 
@@ -28,18 +31,18 @@ void Object::renderShadow() const
 
 void Object::loadObjects()
 {
-	piece[WHITE][KING] = new Object(Model::king, Texture::white);
-	piece[WHITE][QUEEN] = new Object(Model::queen, Texture::white);
-	piece[WHITE][ROOK] = new Object(Model::rook, Texture::white);
-	piece[WHITE][BISHOP] = new Object(Model::bishop, Texture::white);
-	piece[WHITE][KNIGHT] = new Object(Model::knightWhite, Texture::white);
-	piece[WHITE][PAWN] = new Object(Model::pawn, Texture::white);
-	piece[BLACK][KING] = new Object(Model::king, Texture::black);
-	piece[BLACK][QUEEN] = new Object(Model::queen, Texture::black);
-	piece[BLACK][ROOK] = new Object(Model::rook, Texture::black);
-	piece[BLACK][BISHOP] = new Object(Model::bishop, Texture::black);
-	piece[BLACK][KNIGHT] = new Object(Model::knightBlack, Texture::black);
-	piece[BLACK][PAWN] = new Object(Model::pawn, Texture::black);
+	piece[WHITE][KING] = new Object(Model::king, Texture::white, Texture::metalSpec);
+	piece[WHITE][QUEEN] = new Object(Model::queen, Texture::white, Texture::metalSpec);
+	piece[WHITE][ROOK] = new Object(Model::rook, Texture::white, Texture::metalSpec);
+	piece[WHITE][BISHOP] = new Object(Model::bishop, Texture::white, Texture::metalSpec);
+	piece[WHITE][KNIGHT] = new Object(Model::knightWhite, Texture::white, Texture::metalSpec);
+	piece[WHITE][PAWN] = new Object(Model::pawn, Texture::white, Texture::metalSpec);
+	piece[BLACK][KING] = new Object(Model::king, Texture::black, Texture::metalSpec);
+	piece[BLACK][QUEEN] = new Object(Model::queen, Texture::black, Texture::metalSpec);
+	piece[BLACK][ROOK] = new Object(Model::rook, Texture::black, Texture::metalSpec);
+	piece[BLACK][BISHOP] = new Object(Model::bishop, Texture::black, Texture::metalSpec);
+	piece[BLACK][KNIGHT] = new Object(Model::knightBlack, Texture::black, Texture::metalSpec);
+	piece[BLACK][PAWN] = new Object(Model::pawn, Texture::black, Texture::metalSpec);
 }
 
 

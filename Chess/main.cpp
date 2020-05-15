@@ -49,15 +49,15 @@ SPEED = 5.0f,
 SPEED_ROT = PI / 2.0f,
 MIN_DISTANCE = 3.0f,
 MAX_DISTANICE = 20.0f,
-MIN_VERTICAL_ANGLE = PI / 12.0f,
+MIN_VERTICAL_ANGLE = PI / 18.0f,
 MAX_VERTICAL_ANGLE = PI / 2.0f;
 
 constexpr glm::mat4 unitMatrix(1.0f);
 
 glm::mat4 P, V, M, depthP, depthV[LIGHT_COUNT];
 glm::vec4 light[LIGHT_COUNT] = {
-	{8.0f, 8.0f, 0.0f, 1.0f},
-	{-8.0f, 8.0f, 0.0f, 1.0f}
+	{4.0f, 4.0f, 0.0f, 1.0f},
+	{-4.0f, 4.0f, 0.0f, 1.0f}
 };
 GameData *data;
 Board *board;
@@ -289,23 +289,24 @@ void drawScene(GLFWwindow *window)
 		board->renderShadow(M);
 	}
 
+	glCullFace(GL_BACK);
+
 	glViewport(0, 0, currentWidth, currentHeight);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	ShaderProgram::objectShader->use();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glCullFace(GL_BACK);
 
 	glUniform4fv(ShaderProgram::objectShader->getUniform("light"), LIGHT_COUNT, glm::value_ptr(light[0]));
 	glUniformMatrix4fv(ShaderProgram::objectShader->getUniform("P"), 1, GL_FALSE, glm::value_ptr(P));
 	glUniformMatrix4fv(ShaderProgram::objectShader->getUniform("V"), 1, GL_FALSE, glm::value_ptr(V));
 	glUniformMatrix4fv(ShaderProgram::objectShader->getUniform("depthP"), 1, GL_FALSE, glm::value_ptr(depthP));
 	glUniformMatrix4fv(ShaderProgram::objectShader->getUniform("depthV"), LIGHT_COUNT, GL_FALSE, glm::value_ptr(depthV[0]));
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, Texture::shadowMap[0]);
-	glUniform1i(ShaderProgram::objectShader->getUniform("shadowMap[0]"), 1);
 	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, Texture::shadowMap[0]);
+	glUniform1i(ShaderProgram::objectShader->getUniform("shadowMap[0]"), 2);
+	glActiveTexture(GL_TEXTURE3);
 	glBindTexture(GL_TEXTURE_2D, Texture::shadowMap[1]);
-	glUniform1i(ShaderProgram::objectShader->getUniform("shadowMap[1]"), 2);
+	glUniform1i(ShaderProgram::objectShader->getUniform("shadowMap[1]"), 3);
 	board->render(M);
 
 	glfwSwapBuffers(window);

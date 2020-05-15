@@ -5,7 +5,7 @@
 #include "lodepng.h"
 
 
-GLuint Texture::board, Texture::white, Texture::black, Texture::draganddrop;
+GLuint Texture::board, Texture::white, Texture::black, Texture::draganddrop, Texture::metalSpec;
 std::array<GLuint, LIGHT_COUNT> Texture::shadowMap, Texture::shadowMapFBO;
 
 
@@ -15,9 +15,10 @@ void Texture::loadTextures()
 	white = fromPNGFile("textures/white.png");
 	black = fromPNGFile("textures/black.png");
 	draganddrop = fromPNGFile("textures/draganddrop.png");
+	metalSpec = fromPNGFile("textures/metal_spec.png");
 
 	for (size_t i = 0; i < LIGHT_COUNT; ++i)
-		shadowMap[i] = forRendering(shadowMapFBO[i]);
+		shadowMap[i] = forShadowMapping(shadowMapFBO[i]);
 }
 
 
@@ -27,6 +28,7 @@ void Texture::deleteTextures()
 	glDeleteTextures(1, &white);
 	glDeleteTextures(1, &black);
 	glDeleteTextures(1, &draganddrop);
+	glDeleteTextures(1, &metalSpec);
 
 	glDeleteTextures(LIGHT_COUNT, &shadowMap[0]);
 	glDeleteFramebuffers(LIGHT_COUNT, &shadowMapFBO[0]);
@@ -54,15 +56,14 @@ GLuint Texture::fromPNGFile(const char *filename)
 }
 
 
-GLuint Texture::forRendering(GLuint &framebuffer)
+GLuint Texture::forShadowMapping(GLuint &framebuffer)
 {
 	GLuint tex;
 	glGenFramebuffers(1, &framebuffer);
 	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 	glGenTextures(1, &tex);
 	glBindTexture(GL_TEXTURE_2D, tex);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT16,
-		SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT16, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);

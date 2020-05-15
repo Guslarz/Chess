@@ -15,7 +15,7 @@ CAPTURE_Y = 4.0f;
 
 
 Board::Board() :
-	_time(0.0f), _boardObject(Model::board, Texture::board), _boardBorderObject(Model::boardBorder, Texture::black)
+	_time(0.0f), _boardObject(Model::board, Texture::board, Texture::metalSpec), _boardBorderObject(Model::boardBorder, Texture::black, Texture::metalSpec)
 {
 	for (unsigned int i = 0; i < 8; ++i) {
 		addPiece(Object::piece[WHITE][PAWN], i, 1);
@@ -71,12 +71,20 @@ void Board::renderShadow(const glm::mat4 &M) const
 {
 	glm::mat4 boardM = glm::scale(M, glm::vec3(4.0f, 1.0f, 4.0f));
 	glUniformMatrix4fv(ShaderProgram::depthShader->getUniform("M"), 1, GL_FALSE, glm::value_ptr(boardM));
-	_boardObject.renderShadow();
+	//_boardObject.renderShadow();
 	//_boardBorderObject.renderShadow();
 
 	glm::mat4 pieceM = glm::translate(M, glm::vec3(-3.5f, 1.0f, -3.5f));
 	for (auto piece : _pieces)
 		piece->renderShadow(pieceM);
+}
+
+
+void Board::renderPieces(const glm::mat4 &M) const
+{
+	glm::mat4 pieceM = glm::translate(M, glm::vec3(-3.5f, 0.0f, -3.5f));
+	for (auto piece : _pieces)
+		piece->render(pieceM);
 }
 
 

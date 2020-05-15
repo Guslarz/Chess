@@ -5,8 +5,8 @@
 
 
 constexpr int
-SHADOW_WIDTH = 2048,
-SHADOW_HEIGHT = 2048,
+SHADOW_WIDTH = 1024,
+SHADOW_HEIGHT = 1024,
 LIGHT_COUNT = 2;
 
 
@@ -16,11 +16,11 @@ public:
 	static void loadTextures();
 	static void deleteTextures();
 
-	static GLuint board, white, black, draganddrop;
+	static GLuint board, white, black, draganddrop, metalSpec;
 	static std::array<GLuint, LIGHT_COUNT> shadowMap, shadowMapFBO;
 
 private:
 	static GLuint fromPNGFile(const char*);
-	static GLuint forRendering(GLuint&);
+	static GLuint forShadowMapping(GLuint&);
 };
 
