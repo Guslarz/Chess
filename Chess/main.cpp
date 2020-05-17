@@ -54,7 +54,7 @@ MAX_VERTICAL_ANGLE = PI / 2.0f;
 
 constexpr glm::mat4 unitMatrix(1.0f);
 
-glm::mat4 P, V, M, depthP, depthV[LIGHT_COUNT];
+glm::mat4 P, V, M, depthP = glm::ortho(-4.0f, 4.0f, -4.0f, 4.0f, 6.0f, 20.0f), depthV[LIGHT_COUNT];
 glm::vec4 light[LIGHT_COUNT] = {
 	{8.0f, 8.0f, 0.0f, 1.0f},
 	{-8.0f, 8.0f, 0.0f, 1.0f}
@@ -233,7 +233,6 @@ void initOpenGLProgram(GLFWwindow *window)
 	P = glm::perspective(FOV, static_cast<float>(INITIAL_WIDTH) / INITIAL_HEIGHT, Z_NEAR, Z_FAR);
 	updateVMatrix(0.0f);
 	M = glm::scale(unitMatrix, glm::vec3(-1.0f, 1.0f, 1.0f));
-	depthP = glm::ortho(-30.0f, 30.0f, -30.0f, 30.0f, -30.0f, 30.0f);
 	for (size_t i = 0; i < LIGHT_COUNT; ++i)
 		depthV[i] = glm::lookAt(glm::vec3(light[i]), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 
