@@ -56,8 +56,8 @@ constexpr glm::mat4 unitMatrix(1.0f);
 
 glm::mat4 P, V, M, depthP, depthV[LIGHT_COUNT];
 glm::vec4 light[LIGHT_COUNT] = {
-	{4.0f, 4.0f, 0.0f, 1.0f},
-	{-4.0f, 4.0f, 0.0f, 1.0f}
+	{8.0f, 8.0f, 0.0f, 1.0f},
+	{-8.0f, 8.0f, 0.0f, 1.0f}
 };
 GameData *data;
 Board *board;
@@ -294,7 +294,7 @@ void drawScene(GLFWwindow *window)
 	glViewport(0, 0, currentWidth, currentHeight);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	ShaderProgram::objectShader->use();
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 	glUniform4fv(ShaderProgram::objectShader->getUniform("light"), LIGHT_COUNT, glm::value_ptr(light[0]));
 	glUniformMatrix4fv(ShaderProgram::objectShader->getUniform("P"), 1, GL_FALSE, glm::value_ptr(P));
@@ -307,6 +307,24 @@ void drawScene(GLFWwindow *window)
 	glActiveTexture(GL_TEXTURE3);
 	glBindTexture(GL_TEXTURE_2D, Texture::shadowMap[1]);
 	glUniform1i(ShaderProgram::objectShader->getUniform("shadowMap[1]"), 3);
+
+	glDisable(GL_DEPTH_TEST);
+	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+	glEnable(GL_STENCIL_TEST);
+	glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
+	glStencilFunc(GL_ALWAYS, 1, 0xffffffff);
+
+	board->renderBoard(M);
+
+	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+	glEnable(GL_DEPTH_TEST);
+	glStencilFunc(GL_EQUAL, 1, 0xffffffff);
+	glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+
+	board->renderPieces(glm::scale(M, glm::vec3(1.0f, -1.0f, 1.0f)));
+
+	glDisable(GL_STENCIL_TEST);
+
 	board->render(M);
 
 	glfwSwapBuffers(window);

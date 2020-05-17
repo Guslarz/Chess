@@ -57,8 +57,9 @@ void Board::render(const glm::mat4 &M) const
 {
 	glm::mat4 boardM = glm::scale(M, glm::vec3(4.0f, 1.0f, 4.0f));
 	glUniformMatrix4fv(ShaderProgram::objectShader->getUniform("M"), 1, GL_FALSE, glm::value_ptr(boardM));
-	glUniform1f(ShaderProgram::objectShader->getUniform("alpha"), 1.0f);
+	glUniform1f(ShaderProgram::objectShader->getUniform("alpha"), 0.9f);
 	_boardObject.render();
+	glUniform1f(ShaderProgram::objectShader->getUniform("alpha"), 1.0f);
 	_boardBorderObject.render();
 
 	glm::mat4 pieceM = glm::translate(M, glm::vec3(-3.5f, 1.0f, -3.5f));
@@ -71,8 +72,6 @@ void Board::renderShadow(const glm::mat4 &M) const
 {
 	glm::mat4 boardM = glm::scale(M, glm::vec3(4.0f, 1.0f, 4.0f));
 	glUniformMatrix4fv(ShaderProgram::depthShader->getUniform("M"), 1, GL_FALSE, glm::value_ptr(boardM));
-	//_boardObject.renderShadow();
-	//_boardBorderObject.renderShadow();
 
 	glm::mat4 pieceM = glm::translate(M, glm::vec3(-3.5f, 1.0f, -3.5f));
 	for (auto piece : _pieces)
@@ -82,9 +81,18 @@ void Board::renderShadow(const glm::mat4 &M) const
 
 void Board::renderPieces(const glm::mat4 &M) const
 {
-	glm::mat4 pieceM = glm::translate(M, glm::vec3(-3.5f, 0.0f, -3.5f));
+	glm::mat4 pieceM = glm::translate(M, glm::vec3(-3.5f, 1.01f, -3.5f));
 	for (auto piece : _pieces)
 		piece->render(pieceM);
+}
+
+
+void Board::renderBoard(const glm::mat4 &M) const
+{
+	glm::mat4 boardM = glm::scale(M, glm::vec3(4.0f, 1.0f, 4.0f));
+	glUniformMatrix4fv(ShaderProgram::objectShader->getUniform("M"), 1, GL_FALSE, glm::value_ptr(boardM));
+	glUniform1f(ShaderProgram::objectShader->getUniform("alpha"), 1.0f);
+	_boardObject.render();
 }
 
 

@@ -35,10 +35,10 @@ void main()
 
 		float visibility = 1.0f;
 		float bias =  clamp(0.005 * tan(acos(nl)), 0, 0.01);
-		for (float x = -1.0f; x <= 1.0f; x += 0.4f) {
-			for (float y = -1.0f; y <= 1.0f; y += 0.4f){
+		for (float x = -1.0f; x <= 1.0f; +++x) {
+			for (float y = -1.0f; y <= 1.0f; ++y){
 				if (texture(shadowMap[i], shadowCoord[i].xy + vec2(x, y) * texelSize).z  <  shadowCoord[i].z - bias)
-					visibility -= 0.02f;
+					visibility -= 0.11f;
 			}
 		}
 		if (visibility < 0.0f) 
