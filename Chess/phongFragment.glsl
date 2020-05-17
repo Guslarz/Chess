@@ -23,7 +23,7 @@ void main()
 		ks = texColor1;
 	vec4 tmp[2];
 		
-	vec2 texelSize = 1.0 / textureSize(shadowMap[0], 0);
+	vec2 texelSize = 1.0 / textureSize(shadowMap[0], 0) * 10.0f;
 
 	pixelColor = vec4(0.0f, 0.0f, 0.0f, 0.0f);
 	for (int i = 0; i < LIGHT_COUNT; ++i) {
