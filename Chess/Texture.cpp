@@ -5,17 +5,20 @@
 #include "lodepng.h"
 
 
-GLuint Texture::board, Texture::white, Texture::black, Texture::draganddrop, Texture::metalSpec;
+GLuint Texture::board, Texture::white, Texture::whiteSpec, Texture::black, Texture::blackSpec, Texture::draganddrop, Texture::metalSpec, Texture::brown;
 std::array<GLuint, LIGHT_COUNT> Texture::shadowMap, Texture::shadowMapFBO;
 
 
 void Texture::loadTextures()
 {
 	board = fromPNGFile("textures/board.png");
-	white = fromPNGFile("textures/white.png");
-	black = fromPNGFile("textures/black.png");
+	white = fromPNGFile("textures/white_d.png");
+	whiteSpec = fromPNGFile("textures/white_s.png");
+	black = fromPNGFile("textures/black_d.png");
+	blackSpec = fromPNGFile("textures/black_s.png");
 	draganddrop = fromPNGFile("textures/draganddrop.png");
 	metalSpec = fromPNGFile("textures/metal_spec.png");
+	brown = fromPNGFile("textures/brown1.png");
 
 	for (size_t i = 0; i < LIGHT_COUNT; ++i)
 		shadowMap[i] = forShadowMapping(shadowMapFBO[i]);
@@ -26,9 +29,12 @@ void Texture::deleteTextures()
 {
 	glDeleteTextures(1, &board);
 	glDeleteTextures(1, &white);
+	glDeleteTextures(1, &whiteSpec);
 	glDeleteTextures(1, &black);
+	glDeleteTextures(1, &blackSpec);
 	glDeleteTextures(1, &draganddrop);
 	glDeleteTextures(1, &metalSpec);
+	glDeleteTextures(1, &brown);
 
 	glDeleteTextures(LIGHT_COUNT, &shadowMap[0]);
 	glDeleteFramebuffers(LIGHT_COUNT, &shadowMapFBO[0]);

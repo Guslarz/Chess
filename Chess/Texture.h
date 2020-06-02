@@ -16,7 +16,7 @@ public:
 	static void loadTextures();
 	static void deleteTextures();
 
-	static GLuint board, white, black, draganddrop, metalSpec;
+	static GLuint board, white, whiteSpec, black, blackSpec, draganddrop, metalSpec, brown;
 	static std::array<GLuint, LIGHT_COUNT> shadowMap, shadowMapFBO;
 
 private:

@@ -31,18 +31,18 @@ void Object::renderShadow() const
 
 void Object::loadObjects()
 {
-	piece[WHITE][KING] = new Object(Model::king, Texture::white, Texture::metalSpec);
-	piece[WHITE][QUEEN] = new Object(Model::queen, Texture::white, Texture::metalSpec);
-	piece[WHITE][ROOK] = new Object(Model::rook, Texture::white, Texture::metalSpec);
-	piece[WHITE][BISHOP] = new Object(Model::bishop, Texture::white, Texture::metalSpec);
-	piece[WHITE][KNIGHT] = new Object(Model::knightWhite, Texture::white, Texture::metalSpec);
-	piece[WHITE][PAWN] = new Object(Model::pawn, Texture::white, Texture::metalSpec);
-	piece[BLACK][KING] = new Object(Model::king, Texture::black, Texture::metalSpec);
-	piece[BLACK][QUEEN] = new Object(Model::queen, Texture::black, Texture::metalSpec);
-	piece[BLACK][ROOK] = new Object(Model::rook, Texture::black, Texture::metalSpec);
-	piece[BLACK][BISHOP] = new Object(Model::bishop, Texture::black, Texture::metalSpec);
-	piece[BLACK][KNIGHT] = new Object(Model::knightBlack, Texture::black, Texture::metalSpec);
-	piece[BLACK][PAWN] = new Object(Model::pawn, Texture::black, Texture::metalSpec);
+	piece[WHITE][KING] = new Object(Model::king, Texture::white, Texture::whiteSpec);
+	piece[WHITE][QUEEN] = new Object(Model::queen, Texture::white, Texture::whiteSpec);
+	piece[WHITE][ROOK] = new Object(Model::rook, Texture::white, Texture::whiteSpec);
+	piece[WHITE][BISHOP] = new Object(Model::bishop, Texture::white, Texture::whiteSpec);
+	piece[WHITE][KNIGHT] = new Object(Model::knightWhite, Texture::white, Texture::whiteSpec);
+	piece[WHITE][PAWN] = new Object(Model::pawn, Texture::white, Texture::whiteSpec);
+	piece[BLACK][KING] = new Object(Model::king, Texture::black, Texture::blackSpec);
+	piece[BLACK][QUEEN] = new Object(Model::queen, Texture::black, Texture::blackSpec);
+	piece[BLACK][ROOK] = new Object(Model::rook, Texture::black, Texture::blackSpec);
+	piece[BLACK][BISHOP] = new Object(Model::bishop, Texture::black, Texture::blackSpec);
+	piece[BLACK][KNIGHT] = new Object(Model::knightBlack, Texture::black, Texture::blackSpec);
+	piece[BLACK][PAWN] = new Object(Model::pawn, Texture::black, Texture::blackSpec);
 }
 
 

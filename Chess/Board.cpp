@@ -15,7 +15,7 @@ CAPTURE_Y = 4.0f;
 
 
 Board::Board() :
-	_time(0.0f), _boardObject(Model::board, Texture::board, Texture::metalSpec), _boardBorderObject(Model::boardBorder, Texture::black, Texture::metalSpec)
+	_time(0.0f), _boardObject(Model::board, Texture::board, Texture::metalSpec), _boardBorderObject(Model::boardBorder, Texture::brown, Texture::metalSpec)
 {
 	for (unsigned int i = 0; i < 8; ++i) {
 		addPiece(Object::piece[WHITE][PAWN], i, 1);
