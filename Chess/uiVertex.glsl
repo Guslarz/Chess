@@ -7,6 +7,6 @@ out vec2 iTexCoord0;
 
 void main()
 {
-	gl_Position = vec4(vertex, 0.0f, 1.0f);
+	gl_Position = vec4(vertex, -1.0f, 1.0f);
 	iTexCoord0 = UV;
 }

@@ -19,6 +19,7 @@
 #include "Board.h"
 #include "Model.h"
 #include "Texture.h"
+#include "Text.h"
 
 
 void errorCallback(int, const char*);
@@ -58,10 +59,11 @@ glm::mat4 P, V, M, depthP = glm::ortho(-4.0f, 4.0f, -4.0f, 4.0f, 6.0f, 20.0f), d
 glm::vec4 light[LIGHT_COUNT] = {
 	{8.0f, 8.0f, 0.0f, 1.0f},
 	{-8.0f, 8.0f, 0.0f, 1.0f}
-};
+}, blackColor(0.0f, 0.0f, 0.0f, 1.0f);
 
 GameData *data;
 Board *board;
+Text *initialText, *infoHeaderText, *infoDataText;
 bool paused = true;
 
 float
@@ -153,8 +155,10 @@ void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods
 			}
 			break;
 		case GLFW_KEY_ESCAPE:
-			delete board;
-			delete data;
+			if (board)
+				delete board;
+			if (data)
+				delete data;
 			board = nullptr;
 			data = nullptr;
 			break;
@@ -231,6 +235,7 @@ void initOpenGLProgram(GLFWwindow *window)
 	Model::loadModels();
 	Texture::loadTextures();
 	Object::loadObjects();
+	Text::loadTexts();
 	P = glm::perspective(FOV, static_cast<float>(INITIAL_WIDTH) / INITIAL_HEIGHT, Z_NEAR, Z_FAR);
 	updateVMatrix(0.0f);
 	M = glm::scale(unitMatrix, glm::vec3(-1.0f, 1.0f, 1.0f));
@@ -246,11 +251,15 @@ void initOpenGLProgram(GLFWwindow *window)
 	glfwSetKeyCallback(window, keyCallback);
 	glfwSetWindowSizeCallback(window, windowSizeCallback);
 	glfwSetDropCallback(window, dropCallback);
+
+	initialText = new Text({"Przeci¹gnij", "i upusc", "plik PGN"}, -0.7f, -0.5f, 1.4f, 1.0f);
 }
 
 
 void freeOpenGLProgram(GLFWwindow *window)
 {
+	delete initialText;
+	Text::deleteTexts();
 	Object::deleteObjects();
 	Texture::deleteTextures();
 	Model::deleteModels();
@@ -358,29 +367,11 @@ void updateVMatrix(float time)
 
 void askForFile(GLFWwindow *window)
 {
-	static float vertices[] = {
-		-1.0f, -1.0f,	1.0f, 1.0f,		-1.0f, 1.0f,
-		-1.0f, -1.0f,	1.0f, 1.0f,		1.0f, -1.0f
-	}, uvs[] = {
-		0.0f, 1.0f,		1.0f, 0.0f,		0.0f, 0.0f,
-		0.0f, 1.0f,		1.0f, 0.0f,		1.0f, 1.0f
-	};
-	static GLsizei count = 6;
-
 	ShaderProgram::uiShader->use();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, Texture::draganddrop);
-	glUniform1i(ShaderProgram::uiShader->getUniform("texSampler0"), 0);
-
-	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, vertices);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, uvs);
-	glDrawArrays(GL_TRIANGLES, 0, 6);
-	glDisableVertexAttribArray(0);
-	glDisableVertexAttribArray(1);
+	glUniform4fv(ShaderProgram::uiShader->getUniform("color"), 1, glm::value_ptr(blackColor));
+	initialText->render();
 
 	glfwSwapBuffers(window);
 	glfwPollEvents();
