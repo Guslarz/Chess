@@ -64,7 +64,7 @@ glm::vec4 light[LIGHT_COUNT] = {
 GameData *data;
 Board *board;
 Text *initialText, *infoHeaderText, *infoDataText;
-bool paused = true;
+bool paused = true, showInfo = false;
 
 float
 speed = 0.0f,
@@ -162,6 +162,9 @@ void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods
 			board = nullptr;
 			data = nullptr;
 			break;
+		case GLFW_KEY_I:
+			showInfo = true;
+			break;
 		}
 		break;
 	case GLFW_RELEASE:
@@ -177,6 +180,9 @@ void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods
 		case GLFW_KEY_Z:
 		case GLFW_KEY_X:
 			speed = 0;
+			break;
+		case GLFW_KEY_I:
+			showInfo = false;
 			break;
 		}
 		break;
@@ -253,12 +259,16 @@ void initOpenGLProgram(GLFWwindow *window)
 	glfwSetDropCallback(window, dropCallback);
 
 	initialText = new Text({"Przeci¹gnij", "i upusc", "plik PGN"}, -0.7f, -0.5f, 1.4f, 1.0f);
+	infoHeaderText = new Text({ "Informacje o partii" }, -0.9f, 0.65f, 1.8f, 0.3f);
 }
 
 
 void freeOpenGLProgram(GLFWwindow *window)
 {
 	delete initialText;
+	delete infoHeaderText;
+	if (infoDataText)
+		delete infoDataText;
 	Text::deleteTexts();
 	Object::deleteObjects();
 	Texture::deleteTextures();
@@ -273,68 +283,78 @@ void drawScene(GLFWwindow *window)
 	glfwSetTime(0.0);
 	updateVMatrix(time);
 
-	if (!paused) {
-		board->addTime(time);
-		if (board->finished()) {
-			const Move *move = data->nextMove();
-			if (move) {
-				printf("%s\n", std::string(*move).c_str());
-				board->finishAnimations();
-				board->applyMove(move);
+	if (showInfo) {
+		ShaderProgram::uiShader->use();
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		glUniform4fv(ShaderProgram::uiShader->getUniform("color"), 1, glm::value_ptr(blackColor));
+		infoHeaderText->render();
+		infoDataText->render();
+	}
+	else {
+		if (!paused) {
+			board->addTime(time);
+			if (board->finished()) {
+				const Move *move = data->nextMove();
+				if (move) {
+					printf("%s\n", std::string(*move).c_str());
+					board->finishAnimations();
+					board->applyMove(move);
+				}
 			}
+			board->applyAnimations();
 		}
-		board->applyAnimations();
+
+		glCullFace(GL_FRONT);
+		for (size_t i = 0; i < LIGHT_COUNT; ++i) {
+			glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+			glBindFramebuffer(GL_FRAMEBUFFER, Texture::shadowMapFBO[i]);
+			ShaderProgram::depthShader->use();
+			glClear(GL_DEPTH_BUFFER_BIT);
+
+			glUniformMatrix4fv(ShaderProgram::depthShader->getUniform("depthP"), 1, GL_FALSE, glm::value_ptr(depthP));
+			glUniformMatrix4fv(ShaderProgram::depthShader->getUniform("depthV"), 1, GL_FALSE, glm::value_ptr(depthV[i]));
+			board->renderShadow(M);
+		}
+
+		glCullFace(GL_BACK);
+
+		glViewport(0, 0, currentWidth, currentHeight);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		ShaderProgram::objectShader->use();
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+		glUniform4fv(ShaderProgram::objectShader->getUniform("light"), LIGHT_COUNT, glm::value_ptr(light[0]));
+		glUniformMatrix4fv(ShaderProgram::objectShader->getUniform("P"), 1, GL_FALSE, glm::value_ptr(P));
+		glUniformMatrix4fv(ShaderProgram::objectShader->getUniform("V"), 1, GL_FALSE, glm::value_ptr(V));
+		glUniformMatrix4fv(ShaderProgram::objectShader->getUniform("depthP"), 1, GL_FALSE, glm::value_ptr(depthP));
+		glUniformMatrix4fv(ShaderProgram::objectShader->getUniform("depthV"), LIGHT_COUNT, GL_FALSE, glm::value_ptr(depthV[0]));
+		glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_2D, Texture::shadowMap[0]);
+		glUniform1i(ShaderProgram::objectShader->getUniform("shadowMap[0]"), 2);
+		glActiveTexture(GL_TEXTURE3);
+		glBindTexture(GL_TEXTURE_2D, Texture::shadowMap[1]);
+		glUniform1i(ShaderProgram::objectShader->getUniform("shadowMap[1]"), 3);
+
+		glDisable(GL_DEPTH_TEST);
+		glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+		glEnable(GL_STENCIL_TEST);
+		glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
+		glStencilFunc(GL_ALWAYS, 1, 0xffffffff);
+
+		board->renderBoard(M);
+
+		glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+		glEnable(GL_DEPTH_TEST);
+		glStencilFunc(GL_EQUAL, 1, 0xffffffff);
+		glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+
+		board->renderPieces(glm::scale(M, glm::vec3(1.0f, -1.0f, 1.0f)));
+
+		glDisable(GL_STENCIL_TEST);
+
+		board->render(M);
 	}
-
-	glCullFace(GL_FRONT);
-	for (size_t i = 0; i < LIGHT_COUNT; ++i) {
-		glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
-		glBindFramebuffer(GL_FRAMEBUFFER, Texture::shadowMapFBO[i]);
-		ShaderProgram::depthShader->use();
-		glClear(GL_DEPTH_BUFFER_BIT);
-
-		glUniformMatrix4fv(ShaderProgram::depthShader->getUniform("depthP"), 1, GL_FALSE, glm::value_ptr(depthP));
-		glUniformMatrix4fv(ShaderProgram::depthShader->getUniform("depthV"), 1, GL_FALSE, glm::value_ptr(depthV[i]));
-		board->renderShadow(M);
-	}
-
-	glCullFace(GL_BACK);
-
-	glViewport(0, 0, currentWidth, currentHeight);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	ShaderProgram::objectShader->use();
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-
-	glUniform4fv(ShaderProgram::objectShader->getUniform("light"), LIGHT_COUNT, glm::value_ptr(light[0]));
-	glUniformMatrix4fv(ShaderProgram::objectShader->getUniform("P"), 1, GL_FALSE, glm::value_ptr(P));
-	glUniformMatrix4fv(ShaderProgram::objectShader->getUniform("V"), 1, GL_FALSE, glm::value_ptr(V));
-	glUniformMatrix4fv(ShaderProgram::objectShader->getUniform("depthP"), 1, GL_FALSE, glm::value_ptr(depthP));
-	glUniformMatrix4fv(ShaderProgram::objectShader->getUniform("depthV"), LIGHT_COUNT, GL_FALSE, glm::value_ptr(depthV[0]));
-	glActiveTexture(GL_TEXTURE2);
-	glBindTexture(GL_TEXTURE_2D, Texture::shadowMap[0]);
-	glUniform1i(ShaderProgram::objectShader->getUniform("shadowMap[0]"), 2);
-	glActiveTexture(GL_TEXTURE3);
-	glBindTexture(GL_TEXTURE_2D, Texture::shadowMap[1]);
-	glUniform1i(ShaderProgram::objectShader->getUniform("shadowMap[1]"), 3);
-
-	glDisable(GL_DEPTH_TEST);
-	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-	glEnable(GL_STENCIL_TEST);
-	glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
-	glStencilFunc(GL_ALWAYS, 1, 0xffffffff);
-
-	board->renderBoard(M);
-
-	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-	glEnable(GL_DEPTH_TEST);
-	glStencilFunc(GL_EQUAL, 1, 0xffffffff);
-	glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
-
-	board->renderPieces(glm::scale(M, glm::vec3(1.0f, -1.0f, 1.0f)));
-
-	glDisable(GL_STENCIL_TEST);
-
-	board->render(M);
 
 	glfwSwapBuffers(window);
 	glfwPollEvents();
@@ -385,6 +405,8 @@ void loadFile(const std::string &filename)
 	std::ifstream file(filename);
 	data = new GameData(file);
 	board = new Board;
+	infoDataText = new Text({ "Event: " + data->tag("Event"), "Site: " + data->tag("Site"), "Date: " + data->tag("Date"), "Round: " + data->tag("Round"),
+		"White: " + data->tag("White"), "Black: " + data->tag("Black"), "Result: " + data->tag("Result") }, -0.9f, -0.95f, 1.8f, 1.5f);
 	file.close();
 }
 

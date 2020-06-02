@@ -35,6 +35,7 @@ public:
 
 	const Move* nextMove();
 	const Move* prevMove();
+	const std::string& tag(const std::string &key) const { return _tags.at(key); }
 
 private:
 	void parse(std::ifstream&);

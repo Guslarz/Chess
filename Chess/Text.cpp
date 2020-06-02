@@ -34,17 +34,15 @@ Text::Text(const std::vector<std::string> &lines, float x, float y, float width,
 	float sx = width / static_cast<float>(maxLineAdvance),
 		sy = height / (lines.size() * INITIAL_CHAR_HEIGHT * LINE_HEIGHT);
 
-
-
 	float currX = x,
-		currY = y + height - INITIAL_CHAR_HEIGHT * LINE_HEIGHT * sy;
+		currY = y + height;
 	for (size_t i = 0; i < lines.size(); ++i) {
 		auto &line = lines[i];
 		for (auto &c : line) {
 			Char character = _chars[c];
 
 			float xpos = currX + character.bearing.x * sx + (width - lineAdvance[i] * sx) / 2.0f,
-				ypos = currY - (character.size.y - character.bearing.y) * sy,
+				ypos = currY - (INITIAL_CHAR_HEIGHT + character.size.y - character.bearing.y) * sy,
 				w = character.size.x * sx,
 				h = character.size.y * sy;
 
