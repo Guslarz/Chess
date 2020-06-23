@@ -209,7 +209,7 @@ void windowSizeCallback(GLFWwindow *window, int width, int height)
 GLFWwindow *initGLFWwindow()
 {
 	if (!glfwInit()) {
-		fprintf(stderr, "Nie mo¿na zainicjowaæ GLFW.\n");
+		fprintf(stderr, "Nie mozna zainicjowac GLFW.\n");
 		return nullptr;
 	}
 
@@ -218,7 +218,7 @@ GLFWwindow *initGLFWwindow()
 	auto *window = glfwCreateWindow(INITIAL_WIDTH, INITIAL_HEIGHT, "Chess", nullptr, nullptr);
 
 	if (window == nullptr) {
-		fprintf(stderr, "Nie mo¿na utworzyæ okna.\n");
+		fprintf(stderr, "Nie mozna utworzyc okna.\n");
 		glfwTerminate();
 		return nullptr;
 	}
@@ -227,7 +227,7 @@ GLFWwindow *initGLFWwindow()
 	glfwSwapInterval(1);
 
 	if (glewInit() != GLEW_OK) {
-		fprintf(stderr, "Nie mo¿na zainicjowaæ GLEW.\n");
+		fprintf(stderr, "Nie mozna zainicjowac GLEW.\n");
 		return nullptr;
 	}
 
