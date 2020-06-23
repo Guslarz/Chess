@@ -1,9 +1,5 @@
 # TODO
-- coś w tle
-- sensowny shader
-- lepsze tekstury
-- odbicia w planszy albo cienie
-- informacje (kto na kogo, event, wynik czy coś)
+- nic
 
 # Sterowanie
 - W, S, A, D - obrót kamery
