@@ -258,8 +258,8 @@ void initOpenGLProgram(GLFWwindow *window)
 	glfwSetWindowSizeCallback(window, windowSizeCallback);
 	glfwSetDropCallback(window, dropCallback);
 
-	initialText = new Text({"Przeci¹gnij", "i upusc", "plik PGN"}, -0.7f, -0.5f, 1.4f, 1.0f);
-	infoHeaderText = new Text({ "Informacje o partii" }, -0.9f, 0.65f, 1.8f, 0.3f);
+	initialText = new Text({"Przeci¹gnij", "i upusc", "plik PGN"}, -0.4f, -0.4f, 0.8f, 0.8f);
+	infoHeaderText = new Text({ "Informacje o partii" }, -0.75f, 0.65f, 1.5f, 0.3f);
 }
 
 
@@ -406,7 +406,7 @@ void loadFile(const std::string &filename)
 	data = new GameData(file);
 	board = new Board;
 	infoDataText = new Text({ "Event: " + data->tag("Event"), "Site: " + data->tag("Site"), "Date: " + data->tag("Date"), "Round: " + data->tag("Round"),
-		"White: " + data->tag("White"), "Black: " + data->tag("Black"), "Result: " + data->tag("Result") }, -0.9f, -0.95f, 1.8f, 1.5f);
+		"White: " + data->tag("White"), "Black: " + data->tag("Black"), "Result: " + data->tag("Result") }, -0.75f, -0.95f, 1.5f, 1.5f);
 	file.close();
 }
 
