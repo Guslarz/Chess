@@ -7,3 +7,4 @@
 - Spacja - pauza/odtwarzaj
 - Strzałka w lewo/prawo - poprzedni/następny ruch
 - ESC - nowy plik
+- I - informacje o grze
