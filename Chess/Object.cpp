@@ -17,7 +17,7 @@ void Object::render() const
 	glBindTexture(GL_TEXTURE_2D, _diffuse);
 	glUniform1i(ShaderProgram::objectShader->getUniform("texSampler0"), 0);
 	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, _diffuse);
+	glBindTexture(GL_TEXTURE_2D, _specular);
 	glUniform1i(ShaderProgram::objectShader->getUniform("texSampler1"), 1);
 	_model->render();
 }
